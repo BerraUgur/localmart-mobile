@@ -1,0 +1,47 @@
+.user-header {
+    background: #f4f4f4;
+    font-weight: bold;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+  
+.user-row {
+    border-bottom: 1px solid #e0e0e0;
+    align-items: center;
+}
+  
+ion-col {
+    word-wrap: break-word;
+    font-size: 14px;
+    padding: 4px 0;
+}
+  
+ion-button {
+    margin-right: 5px;
+}
+
+ion-col > strong{
+    display: inline-block;
+    min-width: 70px;
+    margin-right: 10px;
+    position: relative;
+}
+ion-col > strong::after{
+    content: ':';
+    position: absolute;
+    display: inline-block;
+    right: 0;
+}
+
+
+.between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+  
+.user-role {
+    font-weight: bold;
+    color: #666;
+}
+  

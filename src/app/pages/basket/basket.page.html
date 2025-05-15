@@ -1,0 +1,96 @@
+<!-- <ion-header class="bar-positive">
+  <h1 class="title">Ionic List</h1>
+</ion-header> -->
+
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <!-- <ion-back-button defaultHref="home" text=""></ion-back-button> -->
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text=""></ion-back-button>
+      <!-- <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+    <ion-title>Sepet</ion-title>
+    <!-- <ion-buttons slot="end">
+      <ion-button routerLink="/product-add">
+        Ürün Ekle
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div>
+    <ion-list class="v2" *ngIf="products.length > 0">
+      <ion-item class="item-avatar" *ngFor="let product of products">
+        <div class="img" routerLink="/product-detail/{{product.id}}">
+          <img src="http://localhost:5203{{product.mainImage}}" alt="{{ product.name }}">
+        </div>
+        <div class="detail">
+          <h2 routerLink="/product-detail/{{product.id}}">{{product.name}}</h2>
+          <p>{{product.description}}</p>
+          <p>{{product.district}} / {{product.city}} - <a href="">{{product.sellerPhone}}</a></p>
+          <div class="price">
+            <div class="price">
+              <del *ngIf="product.price">{{ product.price }} TL</del>
+              <strong *ngIf="product.discountedPrice">{{ product.discountedPrice }} TL</strong>
+            </div>
+          </div>
+          <ion-button (click)="deleteProductBasket(product.id)" color="danger" fill="outline" size="small" class="ion-margin-top">
+            Sepetten Kaldır
+            <ion-icon name="trash" slot="end" class=""></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+    <div *ngIf="products.length === 0" class="ion-padding ion-text-center">
+      <ion-note color="dark">
+        <ion-icon name="information-circle-outline"></ion-icon> Sepetinizde ürün bulunmamaktadır.
+      </ion-note>
+    </div>
+  </div>
+
+  <ng-container *ngIf="products.length > 0">
+    <ion-header [translucent]="true" class="ion-margin-top">
+      <ion-toolbar color="warning">
+        <ion-title>Teslimat Bilgileri</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-list lines="full">
+      <div>
+        <ion-item>
+          <ion-label position="floating">İl</ion-label>
+          <ion-input type="text" required [(ngModel)]="city"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">İlçe</ion-label>
+          <ion-input type="text" required [(ngModel)]="district"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Posta Kodu</ion-label>
+          <ion-input type="text" required [(ngModel)]="postalCode"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Açık Adres</ion-label>
+          <ion-input type="text" required [(ngModel)]="openAddress"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Sipariş Notunuz</ion-label>
+          <ion-textarea [(ngModel)]="note"></ion-textarea>
+        </ion-item>
+      </div>
+    </ion-list>
+    <ion-grid>
+      <ion-row class="ion-padding">
+        <ion-col size="12" class="ion-text-right">
+          <h3>Toplam: {{ totalPrice }} TL</h3>
+          <ion-button (click)="approveBasket()" shape="full" expand="block" color="success">Sepeti Onayla</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+</ion-content>

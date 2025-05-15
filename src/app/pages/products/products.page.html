@@ -1,0 +1,100 @@
+<!-- <ion-header class="bar-positive">
+  <h1 class="title">Ionic List</h1>
+</ion-header> -->
+
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <!-- <ion-back-button defaultHref="home" text=""></ion-back-button> -->
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text=""></ion-back-button>
+      <!-- <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+    <ion-title>Ürünler</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/product-add" *ngIf="currentRole === 'Seller'">
+        Ürün Ekle
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <!-- <ion-item>
+      <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" ng-model="input.filterUser" placeholder="Search">
+      </label>
+    </ion-item> -->
+    <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Sizin Ürünleriniz</h3>
+    <!-- <ion-button size="medium" color="warning" class="ion-margin-bottom">Sizin Ürünleriniz</ion-button> -->
+    <div *ngIf="currentRole === 'Seller' && sellerProducts.length === 0">
+      <p class="ion-margin-bottom">Henüz ürününüz bulunmamktadır.</p>
+      <ion-button routerLink="/product-add" expand="block" color="warning" class="">Ürün Ekle</ion-button>
+    </div>
+
+    <ion-item class="item-avatar" *ngFor="let product of sellerProducts" routerLink="/product-detail/{{product.id}}">
+      <div class="img">
+        <img src="http://localhost:5203{{product.mainImage}}" alt="{{ product.name }}">
+      </div>
+      <div class="detail">
+        <h2>{{product.name}}</h2>
+        <p>{{product.description}}</p>
+        <div class="price">
+          <div class="price">
+            <del *ngIf="product.price">{{ product.price }} TL</del>
+            <strong *ngIf="product.discountedPrice">{{ product.discountedPrice }} TL</strong>
+          </div>
+        </div>
+      </div>
+    </ion-item>
+    
+
+    <br *ngIf="currentRole === 'Seller'">
+    <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Diğer Ürünler</h3>
+    <div class="select-form mb-10">
+      <!-- <span class="filter-result ion-margin-bottom">
+        <strong>{{ products.length }}</strong> ürün içerisinden <strong>{{ filteredProducts.length }}</strong> adet listeleniyor
+      </span> -->
+
+      <ion-item class="ion-margin-bottom">
+        <ion-label position="floating">Filtrele: <strong>{{ notSellerProducts.length }}</strong> ürün içerisinden <strong>{{ filteredProducts.length }}</strong> adet listeleniyor</ion-label>
+        <ion-select value="all" (ionChange)="updateFilter($event)">
+          <ion-select-option value="all">Tüm Şehirler</ion-select-option>
+          <ion-select-option *ngFor="let city of cities" [value]="city">{{ city }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <!-- <div class="bd-input">
+        <div>
+          <select (change)="updateFilter($event)">
+            <option value="all">Tüm Şehirler</option>
+            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+          </select>
+        </div>
+      </div> -->
+
+    </div>
+    <div class="bd-wrapper-1" *ngIf="filteredProducts.length > 0;">
+      <ion-item class="item-avatar" *ngFor="let product of filteredProducts" routerLink="/product-detail/{{product.id}}">
+        <div class="img">
+          <img src="http://localhost:5203{{product.mainImage}}" alt="{{ product.name }}">
+        </div>
+        <div class="detail">
+          <h2>{{product.name}}</h2>
+          <p>{{product.description}}</p>
+          <div class="price">
+            <div class="price">
+              <del *ngIf="product.price">{{ product.price }} TL</del>
+              <strong *ngIf="product.discountedPrice">{{ product.discountedPrice }} TL</strong>
+            </div>
+          </div>
+        </div>
+      </ion-item>
+    </div>
+  </ion-list>
+</ion-content>

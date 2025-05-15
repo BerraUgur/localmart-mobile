@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="user-list" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Kullanıcı Güncelle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="full">
+    <form [formGroup]="userForm" (ngSubmit)="updateUser()">    
+      <ion-item>
+        <ion-label position="floating">Adı:</ion-label>
+        <ion-input formControlName="firstName" type="text" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Soyadı:</ion-label>
+        <ion-input formControlName="lastName" type="text" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Kullanıcı Adı:</ion-label>
+        <ion-input formControlName="username" type="text" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">E-posta:</ion-label>
+        <ion-input formControlName="email" type="email" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Telefon Numarası:</ion-label>
+        <ion-input formControlName="phoneNumber" type="tel" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Rol:</ion-label>
+        <ion-select formControlName="role" value="{{user.role}}" required>
+          <ion-select-option value="1">Kullanıcı</ion-select-option>
+          <ion-select-option value="2">Satıcı</ion-select-option>
+          <ion-select-option value="3">Admin</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <!-- <ion-list>
+        <br><br>
+        <ion-item>
+          <ion-select formControlName="role" value="{{user.role}}">
+            <ion-select-option value="1">Admin</ion-select-option>
+            <ion-select-option value="2">Kullanıcı</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list> -->
+
+      <ion-row>
+        <ion-col>
+          <ion-button type="submit" color="warning" shape="full" expand="block" [disabled]="userForm.invalid">Güncelle</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </ion-list>
+</ion-content>

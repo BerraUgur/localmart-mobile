@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="products" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ürün Güncelle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="full">
+    <form [formGroup]="productForm" (ngSubmit)="updateProduct()" class="">
+      <input style="display: none;" type="number" id="sellerUserId" formControlName="sellerUserId" value="{{currentUserId}}">
+      <ion-row class="ion-padding">
+        <ion-col (click)="clickNextInput($event)">
+          <ion-button shape="full" expand="block" color="warning" fill="outline">Ana Görsel</ion-button>
+          <!-- <input class="d-none" type="file" accept="image/*" (change)="onMainImageSelected($event)" /> -->
+          <input class="d-none" type="file" accept="image/*" (change)="onMainImageSelected($event)" />
+        </ion-col>
+        <ion-col (click)="clickNextInput($event)">
+          <ion-button shape="full" expand="block" color="warning" fill="outline">Diğer Görseller</ion-button>
+          <!-- <input class="d-none" type="file" multiple accept="image/*" (change)="onOtherImagesSelected($event)" /> -->
+          <input class="d-none" type="file" multiple accept="image/*" (change)="onImagesSelected($event)" />
+        </ion-col>
+      </ion-row>
+      
+      <ion-row class="ion-padding" *ngIf="mainImage">
+        <ion-col>
+          <img *ngIf="mainImage" [src]="(!isNewMainImg ? 'http://localhost:5203' : '') + mainImage" class="preview-img" />
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-padding" *ngIf="imagesArr.length > 0">
+        <ion-col>
+          <div class="preview-list">
+            <img *ngFor="let img of imagesArr" [src]="(!isNewOtherImg ? 'http://localhost:5203' : '') + img" [hidden]="!img" />
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-item>
+        <ion-label position="floating">Ürünün Adı:</ion-label>
+        <ion-input formControlName="name" type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Stok Adedi:</ion-label>
+        <ion-input formControlName="stock" type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Ürün Fiyatı:</ion-label>
+        <ion-input formControlName="discountedPrice" type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Eski Fiyat:</ion-label>
+        <ion-input formControlName="price" type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Ürün Açıklaması:</ion-label>
+        <ion-input formControlName="description" type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">İl:</ion-label>
+        <ion-input formControlName="city" type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">İlçe:</ion-label>
+        <ion-input formControlName="district" type="text" required></ion-input>
+      </ion-item>
+      <ion-row>
+        <ion-col>
+          <ion-button type="submit" color="warning" shape="full" expand="block">Güncelle</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </ion-list>
+</ion-content>
+

@@ -1,0 +1,47 @@
+
+<ion-header class=" 'ion-no-border">
+  <ion-toolbar>
+    <!-- <ion-title>login</ion-title> -->
+  </ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button defaultHref="home" text="" color="dark"></ion-back-button>
+  </ion-buttons>
+</ion-header>
+
+<ion-content>
+    <ion-card class="ion-no-margin">
+      <!-- <ion-img src="assets/images/header1.png"></ion-img> -->
+      <div class="wave-area">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="currentColor" fill-opacity="1" d="M0,288L21.8,272C43.6,256,87,224,131,224C174.5,224,218,256,262,261.3C305.5,267,349,245,393,240C436.4,235,480,245,524,240C567.3,235,611,213,655,181.3C698.2,149,742,107,785,112C829.1,117,873,171,916,192C960,213,1004,203,1047,181.3C1090.9,160,1135,128,1178,122.7C1221.8,117,1265,139,1309,165.3C1352.7,192,1396,224,1418,240L1440,256L1440,0L1418.2,0C1396.4,0,1353,0,1309,0C1265.5,0,1222,0,1178,0C1134.5,0,1091,0,1047,0C1003.6,0,960,0,916,0C872.7,0,829,0,785,0C741.8,0,698,0,655,0C610.9,0,567,0,524,0C480,0,436,0,393,0C349.1,0,305,0,262,0C218.2,0,175,0,131,0C87.3,0,44,0,22,0L0,0Z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="currentColor" fill-opacity="1" d="M0,32L40,64C80,96,160,160,240,197.3C320,235,400,245,480,224C560,203,640,149,720,144C800,139,880,181,960,181.3C1040,181,1120,139,1200,133.3C1280,128,1360,160,1400,176L1440,192L1440,0L1400,0C1360,0,1280,0,1200,0C1120,0,1040,0,960,0C880,0,800,0,720,0C640,0,560,0,480,0C400,0,320,0,240,0C160,0,80,0,40,0L0,0Z"></path></svg>
+      </div>
+
+      <div class="h">
+        <b>Hoşgeldiniz</b>
+        <h2>Giriş Yap</h2>
+      </div>
+      <ion-card-content>
+        <div class="wrapform">
+          <ion-item>
+            <ion-icon name="mail-outline"></ion-icon>
+            <ion-input name="email" type="email" placeholder="E-Posta Adresiniz veya Kullanıcı Adınız" [(ngModel)]="email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <ion-input name="password" type="password" placeholder="***********" [(ngModel)]="password"></ion-input>
+          </ion-item>
+        </div>
+        <div class="sign-btn-wrap">
+          <ion-button (click)="login()" fill="solid" shape="round" color="warning"class="sign-btn">Giriş Yap</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <div class="ion-card-footer">
+      <span>Hesabın Yok mu?</span>
+      <button routerLink="/register" class="ion-no-padding">Kayıt Ol</button>
+    </div>
+</ion-content>
+
+
+
+

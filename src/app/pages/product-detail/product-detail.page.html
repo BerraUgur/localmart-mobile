@@ -1,0 +1,91 @@
+<!-- <ion-header class="bar-positive">
+  <h1 class="title">Ionic List</h1>
+</ion-header> -->
+
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <!-- <ion-back-button defaultHref="home" text=""></ion-back-button> -->
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text=""></ion-back-button>
+      <!-- <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+    <ion-title>Ürün Detayı</ion-title>
+    <!-- <ion-buttons slot="end">
+      <ion-button routerLink="/product-add">
+        Ürün Ekle
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- <ion-slides pager="true" class="product-slider">
+    <ion-slide>
+      <img src="../../assets/product-slider/prod-slide1.png" />
+    </ion-slide>
+    <ion-slide>
+      <img src="../../assets/product-slider/prod-slide1.png" />
+    </ion-slide>
+    <ion-slide>
+      <img src="../../assets/product-slider/prod-slide1.png" />
+    </ion-slide>
+  </ion-slides> -->
+
+    <div class="content-template-3">
+      <div class="main-img">
+          <div class="swiper product-main-imgs">
+              <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <div class="img"><img [src]="'http://localhost:5203' + product?.mainImage" alt="{{ product?.name }}" width="150"></div>
+                  </div>
+                  <div *ngFor="let image of product?.images" [hidden]="!image" class="swiper-slide">
+                    <div class="img"><img [src]="'http://localhost:5203/' + image" alt="{{ product?.name }}" width="100"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="other-imgs">
+          <div class="swiper product-other-imgs">
+              <div class="swiper-wrapper">
+                  <div class="swiper-slide active"><div class="img"><img [src]="'http://localhost:5203' + product?.mainImage" alt="{{ product?.name }}" width="150"></div></div>
+                  <div *ngFor="let image of product?.images" [hidden]="!image" class="swiper-slide"><div class="img {{!image ? 'hide' : ''}}"><img [src]="'http://localhost:5203/' + image" alt="{{ product?.name }}" width="100"></div></div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+  <!-- <ion-img src="http://localhost:5203{{ product?.mainImage }}" alt="{{ product?.name }}"></ion-img> -->
+
+  <div class="ion-padding-vertical">
+    <h1 class="item-name">{{ product?.name }}</h1>
+
+    <h4 class="price">
+      {{ product?.discountedPrice }} TL
+      <span class="real-price">{{ product?.price }} TL</span>
+    </h4>
+  </div>
+
+  <div class="seperator">
+    <hr>
+  </div>
+
+  <div class="description">
+    <h5>Açıklama</h5>
+
+    <p>{{ product?.description }}</p>
+  </div>
+
+  <!-- <ion-button *ngIf="isLogging && currentRole !== 'Admin' && currentRole !== 'User'" expand="block" color="warning" class="ion-margin-top ion-margin-bottom" (click)="addToCart(product?.id)">Sepete Ekle</ion-button> -->
+  <ion-button expand="block" color="warning" class="ion-margin-top ion-margin-bottom" (click)="addToCart(product?.id)">Sepete Ekle</ion-button>
+  
+  <ion-col *ngIf="currentUserId === product?.sellerUserId || currentRole === 'Admin'" size="12" size-md="2" class="ion-margin-top control-btns">
+    <ion-button *ngIf="currentUserId === product?.sellerUserId || currentRole === 'Admin'" size="medium" color="danger" (click)="deleteProduct(product?.id)">Ürünü Sil</ion-button>
+    <ion-button *ngIf="currentUserId === product?.sellerUserId" size="medium" color="primary" [routerLink]="['/product-update', product?.id]">Güncelle</ion-button>
+  </ion-col>
+
+</ion-content>

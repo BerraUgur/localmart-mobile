@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Kullanıcılar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <!-- <ion-row class="user-header">
+      <ion-col size="12" size-md="2">Ad Soyad</ion-col>
+      <ion-col size="12" size-md="2">Kullanıcı Adı</ion-col>
+      <ion-col size="12" size-md="2">Mail</ion-col>
+      <ion-col size="12" size-md="2">Telefon</ion-col>
+      <ion-col size="12" size-md="2">Rol</ion-col>
+      <ion-col size="12" size-md="2">İşlemler</ion-col>
+    </ion-row> -->
+
+    <ion-row *ngFor="let user of users" class="user-row ion-padding">
+      <ion-col size="12" size-md="2">
+        <div class="between">
+          <div routerLink="/user-edit/{{user.id}}">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="user-role">
+            {{ user.role == 1 ? 'Kullanıcı' : user.role == 2 ? 'Satıcı' : user.role == 3 ? 'Admin' : '' }}
+          </div>
+        </div>
+      </ion-col>
+      <ion-col size="12" size-md="2">
+        <strong>K.Adı</strong> {{ user.username }}
+      </ion-col>
+      <ion-col size="12" size-md="2">
+        <strong>Email</strong> {{ user.email }}
+      </ion-col>
+      <ion-col size="12" size-md="2">
+        <strong>Telefon</strong> {{ user.phoneNumber }}
+      </ion-col>
+      <!-- <ion-col size="12" size-md="2">
+        {{ user.role == 1 ? 'Kullanıcı' : user.role == 2 ? 'Satıcı' : user.role == 3 ? 'Admin' : '' }}
+      </ion-col> -->
+      <ion-col size="12" size-md="2" class="ion-margin-top ion-text-end">
+        <ion-button size="small" color="danger" (click)="deleteUser(user.id)">Sil</ion-button>
+        <ion-button size="small" color="warning" routerLink="/user-edit/{{user.id}}">Güncelle</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
