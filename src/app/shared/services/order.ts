@@ -14,5 +14,6 @@ export interface Order {
 export interface OrderItem {
     productId?: number,
     quantity?: number,
-    product: Product
+    product: Product,
+    status?: string
 }

@@ -8,16 +8,16 @@ import { Router } from '@angular/router';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage {
-
   isLogging = false;
-  currentRole:any = 1;
-  currentRoleText:any = '';
-  currentUserId?:Number | any;
-  currentUser?:User;
-  isVisitor:any = '';
+  currentRole: any = 1;
+  currentRoleText: any = '';
+  currentUserId?: Number | any;
+  currentUser?: User;
+  isVisitor: any = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.isLogging = this.authService.loggedIn()
@@ -25,16 +25,15 @@ export class HomePage {
     console.log(this.currentRole)
     if (this.currentRole == 'User') {
       this.currentRoleText = 'Müşteri'
-    }else if (this.currentRole == 'Seller') {
+    } else if (this.currentRole == 'Seller') {
       this.currentRoleText = 'Satıcı'
-    }else if (this.currentRole == 'Admin') {
+    } else if (this.currentRole == 'Admin') {
       this.currentRoleText = 'Admin'
-    }else{
+    } else {
       this.isVisitor = true
     }
 
-    
-    if(this.isLogging){
+    if (this.isLogging) {
       this.currentUserId = this.authService.getCurrentUserId()
       this.authService.getUser(this.currentUserId).subscribe(user => {
         this.currentUser = user
@@ -42,12 +41,10 @@ export class HomePage {
         console.log(this.currentUser)
       })
     }
-    
   }
 
-  logOut(){
+  logOut() {
     this.authService.logout()
-    this.router.navigate(['/']).then(c=>window.location.reload())
+    this.router.navigate(['/']).then(c => window.location.reload())
   }
-  
 }

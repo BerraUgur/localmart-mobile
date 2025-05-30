@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
-
-import { productsPageRoutingModule } from './products-routing.module';
 import { productsPage } from './products.page';
-
+import { productsPageRoutingModule } from './products-routing.module';
 
 @NgModule({
   imports: [
@@ -17,4 +14,4 @@ import { productsPage } from './products.page';
   ],
   declarations: [productsPage]
 })
-export class productsPageModule {}
+export class productsPageModule { }

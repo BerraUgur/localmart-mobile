@@ -10,7 +10,8 @@
 <ion-content>
   <ion-list lines="full">
     <form [formGroup]="productForm" (ngSubmit)="updateProduct()" class="">
-      <input style="display: none;" type="number" id="sellerUserId" formControlName="sellerUserId" value="{{currentUserId}}">
+      <input style="display: none;" type="number" id="sellerUserId" formControlName="sellerUserId"
+        value="{{currentUserId}}">
       <ion-row class="ion-padding">
         <ion-col (click)="clickNextInput($event)">
           <ion-button shape="full" expand="block" color="warning" fill="outline">Ana Görsel</ion-button>
@@ -23,17 +24,19 @@
           <input class="d-none" type="file" multiple accept="image/*" (change)="onImagesSelected($event)" />
         </ion-col>
       </ion-row>
-      
+
       <ion-row class="ion-padding" *ngIf="mainImage">
         <ion-col>
-          <img *ngIf="mainImage" [src]="(!isNewMainImg ? 'http://localhost:5203' : '') + mainImage" class="preview-img" />
+          <img *ngIf="mainImage" [src]="(!isNewMainImg ? 'http://localhost:5203' : '') + mainImage"
+            class="preview-img" />
         </ion-col>
       </ion-row>
 
       <ion-row class="ion-padding" *ngIf="imagesArr.length > 0">
         <ion-col>
           <div class="preview-list">
-            <img *ngFor="let img of imagesArr" [src]="(!isNewOtherImg ? 'http://localhost:5203' : '') + img" [hidden]="!img" />
+            <img *ngFor="let img of imagesArr" [src]="(!isNewOtherImg ? 'http://localhost:5203' : '') + img"
+              [hidden]="!img" />
           </div>
         </ion-col>
       </ion-row>
@@ -74,4 +77,3 @@
     </form>
   </ion-list>
 </ion-content>
-

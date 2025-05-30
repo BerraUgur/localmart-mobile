@@ -14,15 +14,17 @@
         <ion-col (click)="clickNextInput($event)">
           <ion-button shape="full" expand="block" color="warning" fill="outline">Ana Görsel</ion-button>
           <!-- <input class="d-none" type="file" accept="image/*" (change)="onMainImageSelected($event)" /> -->
-          <input class="d-none" type="file" accept="image/*" (change)="onSingleFileSelected($event)" [(ngModel)]="mainImage" />
+          <input class="d-none" type="file" accept="image/*" (change)="onSingleFileSelected($event)"
+            [(ngModel)]="mainImage" />
         </ion-col>
         <ion-col (click)="clickNextInput($event)">
           <ion-button shape="full" expand="block" color="warning" fill="outline">Diğer Görseller</ion-button>
           <!-- <input class="d-none" type="file" multiple accept="image/*" (change)="onOtherImagesSelected($event)" /> -->
-          <input class="d-none" type="file" multiple accept="image/*" (change)="onMultipleFilesSelected($event)" [(ngModel)]="images" />
+          <input class="d-none" type="file" multiple accept="image/*" (change)="onMultipleFilesSelected($event)"
+            [(ngModel)]="images" />
         </ion-col>
       </ion-row>
-      
+
       <ion-row class="ion-padding" *ngIf="singleImageBase64">
         <ion-col>
           <img *ngIf="singleImageBase64" [src]="singleImageBase64" class="preview-img" />
@@ -73,4 +75,3 @@
     </div>
   </ion-list>
 </ion-content>
-

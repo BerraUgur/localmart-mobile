@@ -6,7 +6,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AuthService } from "./shared/services/auth.service";
 
@@ -42,7 +42,7 @@ import { AuthInterceptor } from './shared/services/auth.interceptor';
     CUSTOM_ELEMENTS_SCHEMA
   ],
 })
-export class AppModule {}
+export class AppModule { }
 function withFetch(): import("@angular/common/http").HttpFeature<import("@angular/common/http").HttpFeatureKind> {
   throw new Error('Function not implemented.');
 }

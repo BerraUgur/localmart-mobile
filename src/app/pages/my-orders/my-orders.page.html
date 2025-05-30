@@ -1,7 +1,3 @@
-<!-- <ion-header class="bar-positive">
-  <h1 class="title">Ionic List</h1>
-</ion-header> -->
-
 <ion-header [translucent]="true">
   <ion-toolbar color="warning">
     <ion-buttons slot="start">
@@ -11,13 +7,12 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
   <div class="orders">
     <div class="sub-title ion-padding">
       <ion-text color="warning">
         <strong>SATICI OLARAK</strong>
-      </ion-text>  
+      </ion-text>
     </div>
     <ion-note *ngIf="incomingOrders.length === 0" color="dark" class="ion-padding">
       <ion-icon name="information-circle-outline"></ion-icon> Siparişiniz bulunmamaktadır.
@@ -26,14 +21,14 @@
     <ion-card *ngFor="let order of incomingOrders" class="ion-padding">
       <ion-card-header>
         <ion-card-title>Sipariş No: {{ order.id }}</ion-card-title>
-        <ion-card-subtitle *ngIf="order.note" class="ion-margin-bottom"><ion-icon name="information-circle-outline"></ion-icon> {{ order.note }}</ion-card-subtitle>
+        <ion-card-subtitle *ngIf="order.note" class="ion-margin-bottom"><ion-icon
+            name="information-circle-outline"></ion-icon> {{ order.note }}</ion-card-subtitle>
       </ion-card-header>
-  
+
       <ion-card-content *ngFor="let item of order.orderItems" class="ion-margin-top ion-no-padding">
-  
+
         <ion-item lines="none">
           <ion-thumbnail slot="start" class="ion-margin-end">
-            <!-- <ion-img [src]="'http://localhost:5203' + item.product.mainImage" alt="{{ item.product.name }}"></ion-img> -->
             <ion-img [src]="'http://localhost:5203' + item.product.mainImage" alt="{{ item.product.name }}"></ion-img>
           </ion-thumbnail>
           <ion-label>
@@ -41,13 +36,13 @@
             <p>{{ item.product.district }} / {{ item.product.city }}</p>
           </ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-label class="ion-margin-bottom ion-margin-top">
             <p>{{ item.product.description }}</p>
           </ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="location-outline" slot="start"></ion-icon>
           <ion-label class="see-all">
@@ -56,35 +51,35 @@
             <small>Posta Kodu: {{ order.address?.postalCode }}</small>
           </ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="call-outline" slot="start"></ion-icon>
           <ion-label>{{ item.product.sellerPhone }}</ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="pricetag-outline" slot="start"></ion-icon>
           <ion-label>{{ item.product.discountedPrice }} TL</ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-buttons slot="end">
-            <ng-container [ngSwitch]="order.status">
-        
+            <ng-container [ngSwitch]="item.status">
+
               <ng-container *ngSwitchCase="'1'">
                 <ion-button fill="outline" color="medium" disabled>Hazırlanıyor...</ion-button>
-                <ion-button expand="block" color="primary" (click)="orderShipped(order)">Kargoya Verildii</ion-button>
+                <ion-button expand="block" color="primary" (click)="orderShipped(order, item.productId)">Kargoya Verildii</ion-button>
               </ng-container>
-        
+
               <ng-container *ngSwitchCase="'2'">
                 <ion-button fill="outline" color="primary" disabled>Kargoya Verildi</ion-button>
                 <ion-button fill="outline" color="medium" disabled>Teslim Bekleniyor</ion-button>
               </ng-container>
-        
+
               <ng-container *ngSwitchCase="'3'">
                 <ion-button color="success" disabled>Teslim Edilmiştir</ion-button>
               </ng-container>
-        
+
             </ng-container>
           </ion-buttons>
         </ion-item>
@@ -96,19 +91,19 @@
     <div class="sub-title ion-padding">
       <ion-text color="warning">
         <strong>ALICI OLARAK</strong>
-      </ion-text>  
+      </ion-text>
     </div>
     <ion-note *ngIf="orders.length === 0" color="dark" class="ion-padding">
       <ion-icon name="information-circle-outline"></ion-icon> Siparişiniz bulunmamaktadır.
     </ion-note>
-  
+
     <ion-card *ngFor="let order of orders" class="ion-padding">
       <ion-card-header>
         <ion-card-title class="ion-margin-bottom">Sipariş No: {{ order.id }}</ion-card-title>
       </ion-card-header>
-  
+
       <ion-card-content *ngFor="let item of order.orderItems" class="ion-margin-top ion-no-padding">
-  
+
         <ion-item lines="none">
           <ion-thumbnail slot="start" class="ion-margin-end">
             <ion-img [src]="'http://localhost:5203' + item.product.mainImage" alt="{{ item.product.name }}"></ion-img>
@@ -118,24 +113,24 @@
             <p>{{ item.product.description }}</p>
           </ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="location-outline" slot="start"></ion-icon>
           <ion-label>
             {{ item.product.district }} / {{ item.product.city }}
           </ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="call-outline" slot="start"></ion-icon>
           <ion-label>{{ item.product.sellerPhone }}</ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="pricetag-outline" slot="start"></ion-icon>
           <ion-label>{{ item.product.discountedPrice }} TL</ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-icon class="ion-margin-end" name="home-outline" slot="start"></ion-icon>
           <ion-label class="see-all">
@@ -144,22 +139,21 @@
             <small>Posta Kodu: {{ order.address?.postalCode }}</small>
           </ion-label>
         </ion-item>
-  
+
         <ion-item lines="none" *ngIf="order.note">
           <ion-icon class="ion-margin-end" name="information-circle-outline" slot="start"></ion-icon>
           <ion-label>{{ order.note }}</ion-label>
         </ion-item>
-  
+
         <ion-item lines="none">
           <ion-buttons slot="end">
-            <ng-container [ngSwitch]="order.status">
+            <ng-container [ngSwitch]="item.status">
               <ng-container *ngSwitchCase="'1'">
                 <ion-button fill="outline" color="medium" disabled>Hazırlanıyor...</ion-button>
-                <!-- <ion-button expand="block" color="primary" (click)="orderDelivered(order)">Kargoya Verildi</ion-button> -->
               </ng-container>
               <ng-container *ngSwitchCase="'2'">
                 <ion-button fill="outline" color="primary" disabled>Kargoya Verildi</ion-button>
-                <ion-button fill="outline" color="medium" (click)="orderDelivered(order)">Teslim Aldım</ion-button>
+                <ion-button fill="outline" color="medium" (click)="orderDelivered(order, item.productId)">Teslim Aldım</ion-button>
               </ng-container>
               <ng-container *ngSwitchCase="'3'">
                 <ion-button color="success" disabled>Teslim Alınmıştır</ion-button>

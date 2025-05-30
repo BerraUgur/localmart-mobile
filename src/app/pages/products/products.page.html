@@ -1,7 +1,3 @@
-<!-- <ion-header class="bar-positive">
-  <h1 class="title">Ionic List</h1>
-</ion-header> -->
-
 <ion-header [translucent]="true">
   <ion-toolbar color="warning">
     <ion-buttons slot="start">
@@ -53,7 +49,6 @@
         </div>
       </div>
     </ion-item>
-    
 
     <br *ngIf="currentRole === 'Seller'">
     <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Diğer Ürünler</h3>
@@ -63,24 +58,18 @@
       </span> -->
 
       <ion-item class="ion-margin-bottom">
-        <ion-label position="floating">Filtrele: <strong>{{ notSellerProducts.length }}</strong> ürün içerisinden <strong>{{ filteredProducts.length }}</strong> adet listeleniyor</ion-label>
+        <ion-label position="floating">Filtrele: <strong>{{ notSellerProducts.length }}</strong> ürün içerisinden
+          <strong>{{ filteredProducts.length }}</strong> adet listeleniyor</ion-label>
         <ion-select value="all" (ionChange)="updateFilter($event)">
           <ion-select-option value="all">Tüm Şehirler</ion-select-option>
           <ion-select-option *ngFor="let city of cities" [value]="city">{{ city }}</ion-select-option>
         </ion-select>
       </ion-item>
-      <!-- <div class="bd-input">
-        <div>
-          <select (change)="updateFilter($event)">
-            <option value="all">Tüm Şehirler</option>
-            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
-          </select>
-        </div>
-      </div> -->
-
     </div>
+
     <div class="bd-wrapper-1" *ngIf="filteredProducts.length > 0;">
-      <ion-item class="item-avatar" *ngFor="let product of filteredProducts" routerLink="/product-detail/{{product.id}}">
+      <ion-item class="item-avatar" *ngFor="let product of filteredProducts"
+        routerLink="/product-detail/{{product.id}}">
         <div class="img">
           <img src="http://localhost:5203{{product.mainImage}}" alt="{{ product.name }}">
         </div>

@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
-
-import { productDetailPageRoutingModule } from './product-detail-routing.module';
 import { productDetailPage } from './product-detail.page';
+import { productDetailPageRoutingModule } from './product-detail-routing.module';
 
 
 @NgModule({
@@ -17,4 +15,4 @@ import { productDetailPage } from './product-detail.page';
   ],
   declarations: [productDetailPage]
 })
-export class productDetailPageModule {}
+export class productDetailPageModule { }

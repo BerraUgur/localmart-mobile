@@ -9,30 +9,39 @@
 UserInterfaceState.xcuserstate
 $RECYCLE.BIN/
 
-*.log
-log.txt
-
-
-/.sourcemaps
-/.versions
-/coverage
-
-# Ionic
-/.ionic
-/www
-/platforms
-/plugins
-
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
-
 # Node
-/node_modules
+node_modules/
 npm-debug.log
 yarn-error.log
+
+# Ionic
+.ionic/
+www/
+platforms/
+plugins/
+
+# Angular
+.angular/
+.angular/cache/
+.sass-cache/
+
+# Build output
+/dist/
+tmp/
+out-tsc/
+bazel-out/
+coverage/
+.sourcemaps/
+.versions/
+
+# Environment
+.env
+
+# Logs
+*.log
+log.txt
+/libpeerconnection.log
+testem.log
 
 # IDEs and editors
 .idea/
@@ -50,19 +59,27 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
-
-
-# Miscellaneous
-/.angular
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+.history/
 
 # System files
 .DS_Store
 Thumbs.db
+$RECYCLE.BIN/
+UserInterfaceState.xcuserstate
+
+# Android
+android/
+android/.gradle/
+android/.idea/
+android/build/
+android/app/build/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+
+# iOS
+ios/
+
+# Miscellaneous
+/connect.lock
+/typings
+

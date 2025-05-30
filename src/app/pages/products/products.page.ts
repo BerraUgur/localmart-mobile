@@ -12,7 +12,7 @@ import { ProductService } from 'src/app/shared/services/product.service';
 
 })
 export class productsPage implements OnInit {
-  currentRole:any = 1;
+  currentRole: any = 1;
   currentUserId?: number;
 
   products: Product[] = [];
@@ -20,8 +20,8 @@ export class productsPage implements OnInit {
   sellerProducts: Product[] = [];
   notSellerProducts: Product[] = [];
   noProducts: boolean = false;
-  
-  cities:any = []
+
+  cities: any = []
 
   // products:any = [
   //   { id: 1, name: 'iPhone 16 Pro 1TB Akıllı Telefon Natural Titanium MYNX3TU/A', description: 'iPhone 16 Pro 1TB Akıllı Telefon Natural Titanium MYNX3TU/A', price: '129.999', discountedPrice: '99.999', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_144721927?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
@@ -30,14 +30,14 @@ export class productsPage implements OnInit {
   //   { id: 4, name: 'APPLE MW0Y3TU/A/MacBook Air/Apple M4 İşlemci', description: 'APPLE MW0Y3TU/A/MacBook Air/Apple M4 İşlemci', price: '6.999', discountedPrice: '5.499', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_151160138?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
   //   { id: 5, name: 'WINIX Zero Compact Hava Temizleme Cihazı Siyah Beyaz', description: 'WINIX Zero Compact Hava Temizleme Cihazı Siyah Beyaz', price: '6.999', discountedPrice: '6.499', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_143826918?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
   // ];
-  
-  constructor(private authService: AuthService, private productService: ProductService) {}
+
+  constructor(private authService: AuthService, private productService: ProductService) { }
 
   ngOnInit() {
     this.currentRole = this.authService.getCurrentRoles()
     this.currentUserId = this.authService.getCurrentUserId();
     console.log(this.currentRole)
-    
+
     this.productService.getAllProducts().subscribe(
       (data: Product[]) => {
         this.products = data;
@@ -61,18 +61,15 @@ export class productsPage implements OnInit {
               this.cities.push(product.city);
             }
           })
-        }else{
+        } else {
           data.forEach(product => {
             if (!this.cities.includes(product.city)) {
               this.cities.push(product.city);
             }
           })
-
         }
-
       },
       error => {
-        // this.toastr.success('Error fetching products', error)
       }
     );
   }
@@ -93,7 +90,7 @@ export class productsPage implements OnInit {
     }
   }
 
-  logout(){
+  logout() {
   }
 
 }

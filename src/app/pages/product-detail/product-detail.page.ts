@@ -116,7 +116,7 @@ export class productDetailPage implements OnInit, AfterViewInit {
       await alert.present();
       return;
     }
-    
+
     if (this.currentRole == "Admin") {
       const warningAlert = await this.alertController.create({
         header: 'Uyarı!',
@@ -126,7 +126,6 @@ export class productDetailPage implements OnInit, AfterViewInit {
       await warningAlert.present();
       return;
     }
-
 
     for (let i = 0; i < this.currentBasket.length; i++) {
       if (this.currentBasket[i].productId === productId) {
@@ -295,7 +294,5 @@ export class productDetailPage implements OnInit, AfterViewInit {
       slide.classList.toggle('active', index === activeIndex);
     });
   }
-
-
 
 }

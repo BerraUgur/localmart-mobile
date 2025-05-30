@@ -30,8 +30,15 @@ export class OrdersService {
     console.log('id => ', id)
     return this.http.put<Order>(`${this.baseUrl}/shipped/${id}`, order);
   }
+  updateOrderToShippedProductById(id: number, order:Order, pid:number | undefined): Observable<Order | null> {
+    console.log('id => ', id)
+    return this.http.put<Order>(`${this.baseUrl}/shipped/${id}?pid=${pid}`, order);
+  }
 
   updateOrderToDeliveredById(id: number, order: Order): Observable<Order | null> {
     return this.http.put<Order>(`${this.baseUrl}/delivered/${id}`, order);
+  }
+  updateOrderToDeliveredProductById(id: number, order: Order, pid:number | undefined): Observable<Order | null> {
+    return this.http.put<Order>(`${this.baseUrl}/delivered/${id}?pid=${pid}`, order);
   }
 }

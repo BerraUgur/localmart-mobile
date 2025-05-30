@@ -5,10 +5,7 @@
 </ion-header>
 
 <ion-content>
-
-
   <ion-card class="ion-no-margin">
-    <!-- <ion-img src="assets/images/header.png"></ion-img> -->
     <div class="shape"></div>
     <ion-card-header>
       <ion-card-title class="ion-h">
@@ -25,22 +22,7 @@
         Telefon: +90 (532) 555 55 55
       </ion-card-subtitle>
     </ion-card-header>
-    <!-- 
-    <div>
-      <span>isLogging => </span> <b>{{ isLogging }}</b>
-      <br><br>
-      <span>currentRole => </span> <b>{{ currentRole }}</b>
-      <br><br>
-      <span>currentRoleText => </span> <b>{{ currentRoleText }}</b>
-      <br><br>
-      <span>currentUserId => </span> <b>{{ currentUserId }}</b>
-      <br><br>
-      <span>currentUser => </span> <b>{{ currentUser }}</b>
-      <br><br>
-      <span>isVisitor => </span> <b>{{ isVisitor }}</b>
-      <br><br>
-    </div> -->
-
+    
     <br>
     <div class="text-center ion-margin-top" *ngIf="isLogging">Sayın {{currentUser?.username}}; <br> {{ currentRoleText
       }} Olarak Giriş Yaptınız.</div>
@@ -63,10 +45,5 @@
           size="small" fill="solid" shape="round" color="warning" class="full" color="warning">Siparişlerim</ion-button>
       </div>
     </ion-card-content>
-
-
-
   </ion-card>
-
-
 </ion-content>

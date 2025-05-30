@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CrudService } from 'src/app/shared/crud.service';
-import { Student } from '../../shared/student';
-import { FormGroup } from '@angular/forms';
-import { Capacitor } from '@capacitor/core';
 import { ProductService } from 'src/app/shared/services/product.service';
 import { AlertController } from '@ionic/angular';
 
@@ -27,10 +23,9 @@ export class ProductAddPage implements OnInit {
   singleImageBase64: string | undefined;
   multipleImagesBase64: string[] = [];
 
-  // constructor(public crudApi: CrudService, private router: Router, public fb: FormBuilder) { }
   constructor(private productService: ProductService, private router: Router, private alertController: AlertController) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   onSingleFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -88,7 +83,8 @@ export class ProductAddPage implements OnInit {
       description: this.description,
       city: this.city,
       district: this.district
-    };
+    }
+
     console.log('Product request', productRequest);
     this.productService.createProduct(productRequest).subscribe(
       async data => {
@@ -100,10 +96,10 @@ export class ProductAddPage implements OnInit {
         });
         await succesAlert.present();
         this.router.navigate(['/products']).then(() => {
-            setTimeout(() => {
-              location.reload();
-            }, 1000);
-          });
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        });
       },
       error => {
         console.error('Product save failed', error);
@@ -116,6 +112,5 @@ export class ProductAddPage implements OnInit {
     const input = parent.querySelector('input[type="file"]') as HTMLElement;
     input?.click();
   }
-
 
 }

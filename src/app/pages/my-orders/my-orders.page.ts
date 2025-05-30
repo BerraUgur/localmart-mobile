@@ -16,7 +16,7 @@ export class MyOrdersPage implements OnInit {
 
   incomingOrders: Order[] = [];
   orders: Order[] = [];
-  allOrders:any = []
+  allOrders: any = []
 
   currentUserId?: number;
   currentUserRole?: string;
@@ -143,7 +143,7 @@ export class MyOrdersPage implements OnInit {
   //     ]
   //   }
   // ];
-  
+
   // orders = [
   //   {
   //     "id": 101,
@@ -266,7 +266,7 @@ export class MyOrdersPage implements OnInit {
   //     ]
   //   }
   // ]
-  
+
   constructor(
     private alertController: AlertController,
     private ordersService: OrdersService,
@@ -280,14 +280,14 @@ export class MyOrdersPage implements OnInit {
     // console.log(this.currentUserRole)
 
     this.ordersService.getOrdersByUserId(this.currentUserId).subscribe(data => {
-      data.forEach((item:any) => {
-        let order:any = {}
+      data.forEach((item: any) => {
+        let order: any = {}
         this.addressService.getAddressById(item.addressId).subscribe(address => {
           item.address = address
           this.orders = data
           console.log(data)
         })
-        item.orderItems.forEach((orderItem:any) => {
+        item.orderItems.forEach((orderItem: any) => {
           this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
             orderItem.product.sellerPhone = user.phoneNumber
           })
@@ -295,14 +295,14 @@ export class MyOrdersPage implements OnInit {
       })
     })
 
-    this.ordersService.getAllOrders().subscribe(data =>{
-      data.forEach((item:any) => {
+    this.ordersService.getAllOrders().subscribe(data => {
+      data.forEach((item: any) => {
         this.addressService.getAddressById(item.addressId).subscribe(address => {
           item.address = address
           // console.log(data)
         })
-        item.orderItems = item.orderItems.filter((p:any) => p.product.sellerUserId == this.currentUserId)
-        item.orderItems.forEach((orderItem:any) => {
+        item.orderItems = item.orderItems.filter((p: any) => p.product.sellerUserId == this.currentUserId)
+        item.orderItems.forEach((orderItem: any) => {
           this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
             orderItem.product.sellerPhone = user.phoneNumber
           })
@@ -316,10 +316,9 @@ export class MyOrdersPage implements OnInit {
       // console.log("this.allOrders => ", this.allOrders)
     })
   }
-  
 
-  orderShipped(order:Order | any){
-    this.ordersService.updateOrderToShippedById(order.id, order).subscribe(data => {
+  orderShipped(order: Order | any, pid:number | undefined) {
+    this.ordersService.updateOrderToShippedProductById(order.id, order, pid).subscribe(data => {
       order.status = 2
       this.alertController.create({
         header: 'Başarılı!',
@@ -329,8 +328,8 @@ export class MyOrdersPage implements OnInit {
     })
   }
 
-  orderDelivered(order:Order | any){
-    this.ordersService.updateOrderToDeliveredById(order.id, order).subscribe(data => {
+  orderDelivered(order: Order | any, pid:number | undefined) {
+    this.ordersService.updateOrderToDeliveredProductById(order.id, order, pid).subscribe(data => {
       order.status = 3
       this.alertController.create({
         header: 'Başarılı!',
@@ -340,13 +339,11 @@ export class MyOrdersPage implements OnInit {
     })
   }
 
-
   // orderShipped(order: any){
   // }
 
   // orderDelivered(order: any){
-    
-  // }
 
+  // }
 
 }

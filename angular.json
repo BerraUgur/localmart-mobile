@@ -31,7 +31,7 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss", "node_modules/ngx-toastr/toastr.css", "node_modules/swiper/swiper-bundle.min.css"],
+            "styles": ["src/theme/variables.scss", "src/global.scss", "node_modules/swiper/swiper-bundle.min.css"],
             "scripts": []
           },
           "configurations": {
@@ -78,9 +78,6 @@
             },
             "development": {
               "browserTarget": "app:build:development"
-            },
-            "ci": {
-              "progress": false
             }
           },
           "defaultConfiguration": "development"
@@ -111,7 +108,7 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss", "node_modules/ngx-toastr/toastr.css", "node_modules/swiper/swiper-bundle.min.css"],
+            "styles": ["src/theme/variables.scss", "src/global.scss", "node_modules/swiper/swiper-bundle.min.css"],
             "scripts": []
           },
           "configurations": {
