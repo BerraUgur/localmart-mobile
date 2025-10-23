@@ -1,6 +1,5 @@
 <ion-header class=" 'ion-no-border">
   <ion-toolbar>
-    <!-- <ion-title>login</ion-title> -->
   </ion-toolbar>
   <ion-buttons slot="start">
     <ion-back-button defaultHref="home" text="" color="dark"></ion-back-button>
@@ -23,14 +22,14 @@
     </div>
 
     <div class="h">
-      <b>Hoşgeldiniz</b>
-      <h2>Giriş Yap</h2>
+      <b>Welcome</b>
+      <h2>Login</h2>
     </div>
     <ion-card-content>
       <div class="wrapform">
         <ion-item>
           <ion-icon name="mail-outline"></ion-icon>
-          <ion-input name="email" type="email" placeholder="E-Posta Adresiniz veya Kullanıcı Adınız"
+          <ion-input name="email" type="email" placeholder="Email Address or Username"
             [(ngModel)]="email"></ion-input>
         </ion-item>
         <ion-item>
@@ -38,13 +37,16 @@
           <ion-input name="password" type="password" placeholder="***********" [(ngModel)]="password"></ion-input>
         </ion-item>
       </div>
+          <div style="text-align:center; margin-top: 16px;">
+            <a routerLink="/forgot-password">Forgot Password?</a>
+          </div>
       <div class="sign-btn-wrap">
-        <ion-button (click)="login()" fill="solid" shape="round" color="warning" class="sign-btn">Giriş Yap</ion-button>
+  <ion-button (click)="login()" fill="solid" shape="round" color="warning" class="sign-btn">Login</ion-button>
       </div>
     </ion-card-content>
   </ion-card>
   <div class="ion-card-footer">
-    <span>Hesabın Yok mu?</span>
-    <button routerLink="/register" class="ion-no-padding">Kayıt Ol</button>
+    <span>Don't have an account?</span>
+    <button routerLink="/register" class="ion-no-padding">Register</button>
   </div>
 </ion-content>

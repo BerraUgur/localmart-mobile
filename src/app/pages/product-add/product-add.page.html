@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="products" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Ürün Ekle</ion-title>
+    <ion-title>Add Product</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,14 +12,12 @@
     <div>
       <ion-row class="ion-padding">
         <ion-col (click)="clickNextInput($event)">
-          <ion-button shape="full" expand="block" color="warning" fill="outline">Ana Görsel</ion-button>
-          <!-- <input class="d-none" type="file" accept="image/*" (change)="onMainImageSelected($event)" /> -->
+          <ion-button shape="full" expand="block" color="warning" fill="outline">Main Image</ion-button>
           <input class="d-none" type="file" accept="image/*" (change)="onSingleFileSelected($event)"
             [(ngModel)]="mainImage" />
         </ion-col>
         <ion-col (click)="clickNextInput($event)">
-          <ion-button shape="full" expand="block" color="warning" fill="outline">Diğer Görseller</ion-button>
-          <!-- <input class="d-none" type="file" multiple accept="image/*" (change)="onOtherImagesSelected($event)" /> -->
+          <ion-button shape="full" expand="block" color="warning" fill="outline">Other Images</ion-button>
           <input class="d-none" type="file" multiple accept="image/*" (change)="onMultipleFilesSelected($event)"
             [(ngModel)]="images" />
         </ion-col>
@@ -40,36 +38,36 @@
       </ion-row>
 
       <ion-item>
-        <ion-label position="floating">Ürünün Adı:</ion-label>
+        <ion-label position="floating">Product Name:</ion-label>
         <ion-input [(ngModel)]="name" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Stok Adedi:</ion-label>
+        <ion-label position="floating">Stock Quantity:</ion-label>
         <ion-input [(ngModel)]="stock" type="number" inputmode="numeric" step="any" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Ürün Fiyatı:</ion-label>
+        <ion-label position="floating">Product Price:</ion-label>
         <ion-input [(ngModel)]="discountedPrice" type="number" inputmode="numeric" step="any" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Eski Fiyat:</ion-label>
+        <ion-label position="floating">Old Price:</ion-label>
         <ion-input [(ngModel)]="price" type="number" inputmode="numeric" step="any" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Ürün Açıklaması:</ion-label>
+        <ion-label position="floating">Product Description:</ion-label>
         <ion-input [(ngModel)]="description" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">İl:</ion-label>
+        <ion-label position="floating">City:</ion-label>
         <ion-input [(ngModel)]="city" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">İlçe:</ion-label>
+        <ion-label position="floating">District:</ion-label>
         <ion-input [(ngModel)]="district" type="text" required></ion-input>
       </ion-item>
       <ion-row>
         <ion-col>
-          <ion-button (click)="saveProduct()" color="warning" shape="full" expand="block">Ürün Ekle</ion-button>
+          <ion-button (click)="saveProduct()" color="warning" shape="full" expand="block">Add Product</ion-button>
         </ion-col>
       </ion-row>
     </div>

@@ -14,4 +14,4 @@ import { BasketPageRoutingModule } from './basket-routing.module';
   ],
   declarations: [BasketPage]
 })
-export class BasketPageModule {}
+export class BasketPageModule { }

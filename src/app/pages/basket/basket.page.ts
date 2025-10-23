@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AddressService } from 'src/app/shared/services/address.service';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { User } from 'src/app/shared/services/comment';
-import { Mail } from 'src/app/shared/services/mail';
-import { MailService } from 'src/app/shared/services/mail.service';
-import { Order } from 'src/app/shared/services/order';
-import { OrdersService } from 'src/app/shared/services/orders.service';
-import { Product } from 'src/app/shared/services/product';
-import { ProductService } from 'src/app/shared/services/product.service';
+import { AddressService } from 'src/app/services/address.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { User } from 'src/app/models/comment';
+import { Mail } from 'src/app/models/mail';
+import { MailService } from 'src/app/services/mail.service';
+import { Order } from 'src/app/models/order';
+import { OrdersService } from 'src/app/services/orders.service';
+import { Product } from 'src/app/models/product';
+import { ProductService } from 'src/app/services/product.service';
+import { LoggerService } from 'src/app/services/logger.service';
 
 @Component({
   selector: 'app-basket',
@@ -29,19 +29,19 @@ export class BasketPage implements OnInit {
 
   constructor(
     private alertController: AlertController,
-    private router: Router,
     private productService: ProductService,
     private addressService: AddressService,
     private ordersService: OrdersService,
     private authService: AuthService,
     private mailService: MailService,
+    private logger: LoggerService
   ) { }
 
   ngOnInit() {
     if (localStorage.getItem('basket')) {
       this.currentBasket = JSON.parse((<any>localStorage.getItem('basket')));
+      this.logger.info('Basket loaded from localStorage', this.currentBasket);
     }
-
     if (this.currentBasket) {
       this.currentBasket.forEach((product: any) => {
         this.productService.getProductById(product.productId).subscribe((product: Product | null) => {
@@ -49,28 +49,23 @@ export class BasketPage implements OnInit {
             this.authService.getUser(product.sellerUserId).subscribe((user) => {
               product.sellerPhone = user.phoneNumber;
               this.products.push(product);
-              // this.updateTotalPrice()
-            })
-
+              this.logger.info('Product loaded for basket', product);
+            });
           } else {
-            console.error('Product not found');
+            this.logger.error('Product not found', { productId: product && 'productId' in product ? (product as any).productId : undefined });
           }
         },
           error => {
-            console.error('Error fetching product details', error);
+            this.logger.error('Error fetching product details', error);
           }
         );
       });
-
       this.currentUserId = this.authService.getCurrentUserId();
       this.authService.getUser(this.currentUserId).subscribe((user) => {
-        this.currentUser = user
-        console.log(this.currentUser)
-
-        console.log("this.currentUser?.email ==>", this.currentUser?.email)
+        this.currentUser = user;
+        this.logger.info('Current user loaded', user);
       });
     }
-
   }
 
   get totalPrice() {
@@ -79,48 +74,43 @@ export class BasketPage implements OnInit {
 
   async deleteProductBasket(productId: number) {
     const alert = await this.alertController.create({
-      header: 'Emin misiniz?',
-      message: 'Bu ürünü sepetinizden silmek istiyor musunuz?',
+      header: 'Are you sure?',
+      message: 'Do you want to remove this product from your basket?',
       buttons: [
         {
-          text: 'İptal',
+          text: 'Cancel',
           role: 'cancel'
         },
         {
-          text: 'Evet',
+          text: 'Yes',
           handler: () => {
             this.products = this.products.filter((p: any) => p.id != productId);
-
             let newBasket: any = [];
             this.products.forEach(p => {
               newBasket.push({ productId: p.id, quantity: 1 });
             });
-
             this.currentBasket = newBasket;
             localStorage.setItem('basket', JSON.stringify(newBasket));
-
-            // Silme işlemi başarılı bildirimi
             this.alertController.create({
-              header: 'Başarılı!',
-              message: 'Ürün sepetinizden silindi.',
-              buttons: ['Tamam']
+              header: 'Success!',
+              message: 'Product removed from your basket.',
+              buttons: ['OK']
             }).then(successAlert => successAlert.present());
           }
         }
       ]
     });
-
     await alert.present();
   }
 
   approveBasket() {
     if (this.city == '' || this.district == '' || this.postalCode == '' || this.openAddress == '') {
       this.alertController.create({
-        header: 'Eksik Bilgi!',
-        message: 'Lütfen Adres Bilgilerini Doldurunuz.',
-        buttons: ['Tamam']
+        header: 'Missing Information!',
+        message: 'Please fill in the address information.',
+        buttons: ['OK']
       }).then(errorAlert => errorAlert.present());
-      return
+      return;
     } else {
       const addressRequest: any = {
         city: this.city,
@@ -129,7 +119,7 @@ export class BasketPage implements OnInit {
         postalCode: this.postalCode,
         openAddress: this.openAddress,
       };
-      console.log('Address request', addressRequest);
+  this.logger.info('Address request', addressRequest);
       this.addressService.addAddress(addressRequest).subscribe(
         data => {
           let order: Order = {
@@ -139,25 +129,12 @@ export class BasketPage implements OnInit {
             orderItems: this.currentBasket
           }
           this.ordersService.addOrder(order).subscribe(data => {
-
-            // let products = '';
-            // this.currentBasket.forEach((basketItem: any) => {
-            //   products += `<b>Ürün Adı</b> ${this.products.find((product: any) => product.id == basketItem.productId).name}, Fiyat: ${this.products.find((product: any) => product.id == basketItem.productId).discountedPrice} TL</br>`;
-            // });
-            // products += `</br><b>Toplam Fiyat:</b> ${this.totalPrice} TL</br></br>`;
-            // products += `Adres Bilgileri:</br></br>Şehir: ${this.city}</br>İlçe: ${this.district}</br>Açık Adres: ${this.openAddress}</br>Posta Kodu: ${this.postalCode}</br></br>`;
-            // products += `Not: ${this.note}</br></br>`;
-            // products += `Siparişiniz başarıyla alınmıştır. Sipariş detaylarınız aşağıdaki gibidir:</br></br>`;
-            // products += `Sipariş Numarası: ${this.}</br></br>`;
-            // products += `Siparişinizin durumu hakkında bilgilendirme yapılacaktır.</br></br>`;
-            // products += `Localmart Ekibi</br></br>`;
-
             let products = `
               <table style="width: 100%; border: 1px solid #000; border-collapse: collapse;">
                 <thead>
                   <tr>
-                    <th style="padding: 8px; text-align: left;">Ürün Adı</th>
-                    <th style="padding: 8px; text-align: left;">Fiyat</th>
+                    <th style="padding: 8px; text-align: left;">Product Name</th>
+                    <th style="padding: 8px; text-align: left;">Price</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -171,62 +148,61 @@ export class BasketPage implements OnInit {
                     `;
             }).join('')}
                   <tr>
-                    <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold;">Toplam Fiyat: ${this.totalPrice} TL</td>
+                    <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold;">Total Price: ${this.totalPrice} TL</td>
                   </tr>
                 </tbody>
               </table>
               <br/>
-              <b>Adres Bilgileri:</b><br/>
+              <b>Address Information:</b><br/>
               <table style="width: 100%; border: 1px solid #000; border-collapse: collapse; margin-top: 10px;">
                 <tr>
-                  <td style="padding: 8px; font-weight: bold;">Şehir:</td>
+                  <td style="padding: 8px; font-weight: bold;">City:</td>
                   <td style="padding: 8px;">${this.city}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 8px; font-weight: bold;">İlçe:</td>
+                  <td style="padding: 8px; font-weight: bold;">District:</td>
                   <td style="padding: 8px;">${this.district}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 8px; font-weight: bold;">Açık Adres:</td>
+                  <td style="padding: 8px; font-weight: bold;">Address:</td>
                   <td style="padding: 8px;">${this.openAddress}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 8px; font-weight: bold;">Posta Kodu:</td>
+                  <td style="padding: 8px; font-weight: bold;">Postal Code:</td>
                   <td style="padding: 8px;">${this.postalCode}</td>
                 </tr>
               </table>
               <br/>
-              <b>Not:</b> ${this.note}<br/><br/>
-              Siparişinizin durumu hakkında bilgilendirme yapılacaktır.<br/><br/>
-              Localmart Ekibi
+              <b>Note:</b> ${this.note}<br/><br/>
+              You will be informed about the status of your order.<br/><br/>
+              Localmart Team
             `;
 
             let mail: Mail = {
               to: this.currentUser?.email,
-              subject: 'Localmart | Sepetiniz Onaylanmıştır.',
+              subject: 'Localmart | Your Basket Has Been Approved.',
               body: products
             }
-            this.mailService.sendMail(mail).subscribe((response) => { console.log('Mail sent successfully', response); }, (error) => { console.error('Error sending mail', error); });
+            this.mailService.sendMail(mail).subscribe(
+              (response) => { this.logger.info('Mail sent successfully', response); },
+              (error) => { this.logger.error('Error sending mail', error); }
+            );
 
-            // ürünlerin sahibine de mail gönder;
+            // Send an e-mail to the owner of the products in the basket
             this.products.forEach((product: any) => {
               this.authService.getUser(product.sellerUserId).subscribe((user) => {
-                // ürün sahipleri için yeni mail oluştur
-                console.log("user => ", user)
                 let newTotalPrice: number = 0;
                 let products = `
                   <table style="width: 100%; border: 1px solid #000; border-collapse: collapse;">
                     <thead>
                       <tr>
-                        <th style="padding: 8px; text-align: left;">Ürün Adı</th>
-                        <th style="padding: 8px; text-align: left;">Fiyat</th>
+                        <th style="padding: 8px; text-align: left;">Product Name</th>
+                        <th style="padding: 8px; text-align: left;">Price</th>
                       </tr>
                     </thead>
                     <tbody>
                       ${this.currentBasket.map((basketItem: any) => {
-                  console.log("this.products =>", this.products)
                   const product = this.products.find((product: any) => product.id == basketItem.productId);
-                  console.log("product => ", product);
                   if (product.sellerUserId != user.id) {
                     return '';
                   }
@@ -239,53 +215,49 @@ export class BasketPage implements OnInit {
                         `;
                 }).join('')}
                       <tr>
-                        <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold;">Toplam Fiyat: ${newTotalPrice.toFixed(2)} TL</td>
+                        <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold;">Total Price: ${newTotalPrice.toFixed(2)} TL</td>
                       </tr>
                     </tbody>
                   </table>
                   <br/>
-                  <b>Adres Bilgileri:</b><br/>
+                  <b>Address Information:</b><br/>
                   <table style="width: 100%; border: 1px solid #000; border-collapse: collapse; margin-top: 10px;">
                     <tr>
-                      <td style="padding: 8px; font-weight: bold;">Şehir:</td>
+                      <td style="padding: 8px; font-weight: bold;">City:</td>
                       <td style="padding: 8px;">${this.city}</td>
                     </tr>
                     <tr>
-                      <td style="padding: 8px; font-weight: bold;">İlçe:</td>
+                      <td style="padding: 8px; font-weight: bold;">District:</td>
                       <td style="padding: 8px;">${this.district}</td>
                     </tr>
                     <tr>
-                      <td style="padding: 8px; font-weight: bold;">Açık Adres:</td>
+                      <td style="padding: 8px; font-weight: bold;">Address:</td>
                       <td style="padding: 8px;">${this.openAddress}</td>
                     </tr>
                     <tr>
-                      <td style="padding: 8px; font-weight: bold;">Posta Kodu:</td>
+                      <td style="padding: 8px; font-weight: bold;">Postal Code:</td>
                       <td style="padding: 8px;">${this.postalCode}</td>
                     </tr>
                   </table>
                   <br/>
-                  Siparişiniz başarıyla alınmıştır. Lütfen en kısa sürede kargoya veriniz:<br/><br/>
-                  Localmart Ekibi
+                  Your order has been received successfully. Please ship as soon as possible.<br/><br/>
+                  Localmart Team
                 `;
 
                 let mail_seller: Mail = {
                   to: user.email,
-                  subject: 'Localmart | Siparişiniz Onaylanmıştır.',
+                  subject: 'Localmart | Your Order Has Been Approved.',
                   body: products
                 }
-                this.mailService.sendMail(mail_seller).subscribe((response) => { console.log('Mail sent successfully', response); }, (error) => { console.error('Error sending mail', error); });
+                this.mailService.sendMail(mail_seller).subscribe();
               })
             })
 
             this.alertController.create({
-              header: 'Başarılı!',
-              message: 'Siparişiniz Onaylanmıştır.',
-              buttons: ['Tamam']
+              header: 'Success!',
+              message: 'Your order has been approved.',
+              buttons: ['OK']
             }).then(successAlert => successAlert.present());
-            console.log("data , Benim datam =>", data)
-            // this.currentBasket = [];
-            // localStorage.removeItem('basket');
-            // this.router.navigate(['/my-orders/'])
           })
         },
         error => {

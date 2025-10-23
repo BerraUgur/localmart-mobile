@@ -26,13 +26,13 @@ ion-col > strong{
     margin-right: 10px;
     position: relative;
 }
+
 ion-col > strong::after{
     content: ':';
     position: absolute;
     display: inline-block;
     right: 0;
 }
-
 
 .between {
     display: flex;
@@ -44,4 +44,3 @@ ion-col > strong::after{
     font-weight: bold;
     color: #666;
 }
-  

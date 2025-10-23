@@ -27,4 +27,3 @@ export interface ProductRequest {
     mainImage: string;
     images: string[];
 }
-

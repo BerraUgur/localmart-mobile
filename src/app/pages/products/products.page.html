@@ -1,18 +1,14 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="warning">
     <ion-buttons slot="start">
-      <!-- <ion-back-button defaultHref="home" text=""></ion-back-button> -->
     </ion-buttons>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/" text=""></ion-back-button>
-      <!-- <ion-button (click)="logout()">
-        <ion-icon name="log-out"></ion-icon>
-      </ion-button> -->
     </ion-buttons>
-    <ion-title>Ürünler</ion-title>
+    <ion-title>Products</ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/product-add" *ngIf="currentRole === 'Seller'">
-        Ürün Ekle
+        Add Product
         <ion-icon name="add"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -21,17 +17,10 @@
 
 <ion-content>
   <ion-list>
-    <!-- <ion-item>
-      <label class="item item-input">
-        <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" ng-model="input.filterUser" placeholder="Search">
-      </label>
-    </ion-item> -->
-    <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Sizin Ürünleriniz</h3>
-    <!-- <ion-button size="medium" color="warning" class="ion-margin-bottom">Sizin Ürünleriniz</ion-button> -->
+    <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Your Products</h3>
     <div *ngIf="currentRole === 'Seller' && sellerProducts.length === 0">
-      <p class="ion-margin-bottom">Henüz ürününüz bulunmamktadır.</p>
-      <ion-button routerLink="/product-add" expand="block" color="warning" class="">Ürün Ekle</ion-button>
+      <p class="ion-margin-bottom">You have no products yet.</p>
+      <ion-button routerLink="/product-add" expand="block" color="warning" class="">Add Product</ion-button>
     </div>
 
     <ion-item class="item-avatar" *ngFor="let product of sellerProducts" routerLink="/product-detail/{{product.id}}">
@@ -51,17 +40,14 @@
     </ion-item>
 
     <br *ngIf="currentRole === 'Seller'">
-    <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Diğer Ürünler</h3>
+    <h3 *ngIf="currentRole === 'Seller'" class="ion-margin-bottom">Other Products</h3>
     <div class="select-form mb-10">
-      <!-- <span class="filter-result ion-margin-bottom">
-        <strong>{{ products.length }}</strong> ürün içerisinden <strong>{{ filteredProducts.length }}</strong> adet listeleniyor
-      </span> -->
 
       <ion-item class="ion-margin-bottom">
-        <ion-label position="floating">Filtrele: <strong>{{ notSellerProducts.length }}</strong> ürün içerisinden
-          <strong>{{ filteredProducts.length }}</strong> adet listeleniyor</ion-label>
+        <ion-label position="floating">Filter: Showing <strong>{{ filteredProducts.length }}</strong> out of <strong>{{
+            notSellerProducts.length }}</strong> products</ion-label>
         <ion-select value="all" (ionChange)="updateFilter($event)">
-          <ion-select-option value="all">Tüm Şehirler</ion-select-option>
+          <ion-select-option value="all">All Cities</ion-select-option>
           <ion-select-option *ngFor="let city of cities" [value]="city">{{ city }}</ion-select-option>
         </ion-select>
       </ion-item>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProductService } from 'src/app/shared/services/product.service';
+import { ProductService } from 'src/app/services/product.service';
 import { AlertController } from '@ionic/angular';
+import { LoggerService } from 'src/app/services/logger.service';
 
 @Component({
   selector: 'app-product-add',
@@ -23,7 +24,9 @@ export class ProductAddPage implements OnInit {
   singleImageBase64: string | undefined;
   multipleImagesBase64: string[] = [];
 
-  constructor(private productService: ProductService, private router: Router, private alertController: AlertController) { }
+  constructor(private productService: ProductService, private router: Router, private alertController: AlertController, private logger: LoggerService) {
+    this.logger.info('ProductAddPage loaded');
+  }
 
   ngOnInit() { }
 
@@ -66,9 +69,9 @@ export class ProductAddPage implements OnInit {
   saveProduct() {
     if (!this.name || this.price === null || this.discountedPrice === null || this.stock === null || !this.description || !this.city || !this.district || !this.singleImageBase64 || this.multipleImagesBase64.length === 0) {
       this.alertController.create({
-        header: 'Uyarı',
-        message: 'Lütfen tüm alanları doldurunuz.',
-        buttons: ['Tamam']
+        header: 'Warning',
+        message: 'Please fill in all fields.',
+        buttons: ['OK']
       }).then(alert => alert.present());
       return;
     }
@@ -85,14 +88,14 @@ export class ProductAddPage implements OnInit {
       district: this.district
     }
 
-    console.log('Product request', productRequest);
+    this.logger.info('Product add attempt', productRequest);
     this.productService.createProduct(productRequest).subscribe(
       async data => {
-        console.log('Product saved successfully', data);
+        this.logger.info('Product saved successfully', data);
         const succesAlert = await this.alertController.create({
-          header: 'Başarılı!',
-          message: 'Ürün başarıyla kaydedildi.',
-          buttons: ['Tamam']
+          header: 'Success!',
+          message: 'Product saved successfully.',
+          buttons: ['OK']
         });
         await succesAlert.present();
         this.router.navigate(['/products']).then(() => {
@@ -102,7 +105,7 @@ export class ProductAddPage implements OnInit {
         });
       },
       error => {
-        console.error('Product save failed', error);
+        this.logger.error('Product save failed', error);
       }
     );
   }
@@ -112,5 +115,4 @@ export class ProductAddPage implements OnInit {
     const input = parent.querySelector('input[type="file"]') as HTMLElement;
     input?.click();
   }
-
 }

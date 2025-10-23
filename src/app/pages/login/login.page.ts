@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { LoginRequest } from 'src/app/shared/services/loginRequest';
+import { AuthService } from 'src/app/services/auth.service';
+import { LoginRequest } from 'src/app/models/loginRequest';
+import { LoggerService } from 'src/app/services/logger.service';
 
 @Component({
   selector: 'app-login',
@@ -11,31 +12,40 @@ import { LoginRequest } from 'src/app/shared/services/loginRequest';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+  email = '';
+  password = '';
 
-  constructor(private http: HttpClient, private router: Router, public authService: AuthService, private alertController: AlertController) { }
-
-  email: string = '';
-  password: string = '';
-
-  ngOnInit() {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    public authService: AuthService,
+    private alertController: AlertController,
+    private logger: LoggerService
+  ) {
+    this.logger.info('LoginPage loaded');
   }
 
-  async login() {
+  ngOnInit(): void { }
+
+  async login(): Promise<void> {
     const loginRequest: LoginRequest = { email: this.email, password: this.password };
-    this.authService.login(loginRequest).subscribe(
-      data => {
+    this.logger.info('Login attempt', loginRequest);
+    this.authService.login(loginRequest).subscribe({
+      next: data => {
         localStorage.setItem('token', data.accessToken ?? "");
         this.authService.setUserStats();
-        this.router.navigate(['/']).then(c => window.location.reload())
+        this.logger.info('Login successful', { email: this.email });
+        this.router.navigate(['/']).then(() => window.location.reload());
       },
-      async error => {
+      error: async (err) => {
+        this.logger.error('Login failed', err);
         const warningAlert = await this.alertController.create({
-          header: 'Uyarı!',
-          message: 'Kullanıcı adı veya şifre hatalı.',
-          buttons: ['Tamam']
+          header: 'Warning!',
+          message: 'Invalid username or password.',
+          buttons: ['OK']
         });
         await warningAlert.present();
       }
-    );
+    });
   }
 }

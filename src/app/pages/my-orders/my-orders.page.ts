@@ -1,11 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AddressService } from 'src/app/shared/services/address.service';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { Order } from 'src/app/shared/services/order';
-import { OrdersService } from 'src/app/shared/services/orders.service';
+import { AddressService } from 'src/app/services/address.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Order } from 'src/app/models/order';
+import { OrdersService } from 'src/app/services/orders.service';
+import { Mail } from 'src/app/models/mail';
+import { MailService } from 'src/app/services/mail.service';
+import { LoggerService } from 'src/app/services/logger.service';
 
 @Component({
   selector: 'app-my-orders',
@@ -21,329 +22,194 @@ export class MyOrdersPage implements OnInit {
   currentUserId?: number;
   currentUserRole?: string;
 
-  // incomingOrders = [
-  //   {
-  //     id: 1001,
-  //     status: '1',
-  //     note: 'Kapıya kadar getirilsin.',
-  //     address: {
-  //       district: 'Kadıköy',
-  //       city: 'İstanbul',
-  //       openAddress: 'Bahariye Cad. No: 15',
-  //       postalCode: '34710'
-  //     },
-  //     orderItems: [
-  //       {
-  //         product: {
-  //           name: 'El Yapımı Tandır Ekmeği',
-  //           district: 'Selçuklu',
-  //           city: 'Konya',
-  //           description: 'Taze, taş fırında pişmiş tandır ekmeği.',
-  //           mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_144721927?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190',
-  //           discountedPrice: 45,
-  //           sellerPhone: '+90 555 111 2233'
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     id: 1002,
-  //     status: '2',
-  //     note: 'Zili çalmayın, arayın.',
-  //     address: {
-  //       district: 'Çankaya',
-  //       city: 'Ankara',
-  //       openAddress: 'Atatürk Blv. No: 25',
-  //       postalCode: '06420'
-  //     },
-  //     orderItems: [
-  //       {
-  //         product: {
-  //           name: 'Organik Bal',
-  //           district: 'Ayvalık',
-  //           city: 'Balıkesir',
-  //           description: '100% doğal, katkısız çiçek balı.',
-  //           mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_133515701?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190',
-  //           discountedPrice: 120,
-  //           sellerPhone: '+90 532 333 4455'
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     id: 1003,
-  //     status: '3',
-  //     note: 'Komşuya bırakılabilir.',
-  //     address: {
-  //       district: 'Karşıyaka',
-  //       city: 'İzmir',
-  //       openAddress: 'Girne Bulvarı No: 78',
-  //       postalCode: '35560'
-  //     },
-  //     orderItems: [
-  //       {
-  //         product: {
-  //           name: 'Zeytinyağı',
-  //           district: 'Edremit',
-  //           city: 'Balıkesir',
-  //           description: 'Soğuk sıkım natürel sızma zeytinyağı.',
-  //           mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_149860847?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190',
-  //           discountedPrice: 90,
-  //           sellerPhone: '+90 555 666 7788'
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     id: 1004,
-  //     status: '1',
-  //     note: 'Öğleden sonra teslim edilsin.',
-  //     address: {
-  //       district: 'Merkez',
-  //       city: 'Eskişehir',
-  //       openAddress: 'İsmet İnönü Cd. No: 34',
-  //       postalCode: '26010'
-  //     },
-  //     orderItems: [
-  //       {
-  //         product: {
-  //           name: 'Ev Yapımı Reçel',
-  //           district: 'Mudanya',
-  //           city: 'Bursa',
-  //           description: 'Çilekli ev yapımı doğal reçel.',
-  //           mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_151160138?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190',
-  //           discountedPrice: 55,
-  //           sellerPhone: '+90 533 999 0001'
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     id: 1005,
-  //     status: '2',
-  //     note: 'Kargo firması ile iletişime geçilsin.',
-  //     address: {
-  //       district: 'Selçuk',
-  //       city: 'İzmir',
-  //       openAddress: 'Efes Yolu Üzeri No: 9',
-  //       postalCode: '35920'
-  //     },
-  //     orderItems: [
-  //       {
-  //         product: {
-  //           name: 'Kurutulmuş Domates',
-  //           district: 'Tarsus',
-  //           city: 'Mersin',
-  //           description: 'Güneşte kurutulmuş doğal domates.',
-  //           mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_143826918?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190',
-  //           discountedPrice: 38,
-  //           sellerPhone: '+90 544 111 2234'
-  //         }
-  //       }
-  //     ]
-  //   }
-  // ];
-
-  // orders = [
-  //   {
-  //     "id": 101,
-  //     "status": "1",
-  //     "note": "Lütfen kargoya dikkatli veriniz.",
-  //     "address": {
-  //       "district": "Kadıköy",
-  //       "city": "İstanbul",
-  //       "openAddress": "Bahariye Caddesi No:12",
-  //       "postalCode": "34710"
-  //     },
-  //     "orderItems": [
-  //       {
-  //         "product": {
-  //           "name": "Bluetooth Kulaklık",
-  //           "description": "Kablosuz ve yüksek ses kalitesi.",
-  //           "mainImage": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_144721927?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190",
-  //           "district": "Kadıköy",
-  //           "city": "İstanbul",
-  //           "sellerPhone": "0555 123 4567",
-  //           "discountedPrice": 299.99
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     "id": 102,
-  //     "status": "2",
-  //     "note": "",
-  //     "address": {
-  //       "district": "Çankaya",
-  //       "city": "Ankara",
-  //       "openAddress": "Atatürk Bulvarı No:24",
-  //       "postalCode": "06680"
-  //     },
-  //     "orderItems": [
-  //       {
-  //         "product": {
-  //           "name": "Akıllı Saat",
-  //           "description": "Adım sayar ve kalp ritmi ölçer.",
-  //           "mainImage": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_133515701?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190",
-  //           "district": "Çankaya",
-  //           "city": "Ankara",
-  //           "sellerPhone": "0533 987 6543",
-  //           "discountedPrice": 449.90
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     "id": 103,
-  //     "status": "3",
-  //     "note": "Ürün sorunsuz teslim alındı.",
-  //     "address": {
-  //       "district": "Konak",
-  //       "city": "İzmir",
-  //       "openAddress": "Cumhuriyet Blv. No:45",
-  //       "postalCode": "35210"
-  //     },
-  //     "orderItems": [
-  //       {
-  //         "product": {
-  //           "name": "Dizüstü Bilgisayar",
-  //           "description": "i5 işlemci, 8GB RAM, SSD disk.",
-  //           "mainImage": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_149860847?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190",
-  //           "district": "Konak",
-  //           "city": "İzmir",
-  //           "sellerPhone": "0542 888 1122",
-  //           "discountedPrice": 7899.99
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     "id": 104,
-  //     "status": "1",
-  //     "note": "",
-  //     "address": {
-  //       "district": "Osmangazi",
-  //       "city": "Bursa",
-  //       "openAddress": "Altıparmak Cd. No:6",
-  //       "postalCode": "16010"
-  //     },
-  //     "orderItems": [
-  //       {
-  //         "product": {
-  //           "name": "Oyuncu Mouse",
-  //           "description": "RGB ışıklı, yüksek hassasiyet.",
-  //           "mainImage": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_151160138?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190",
-  //           "district": "Osmangazi",
-  //           "city": "Bursa",
-  //           "sellerPhone": "0505 333 7788",
-  //           "discountedPrice": 159.50
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     "id": 105,
-  //     "status": "2",
-  //     "note": "Teslimat tarihi değiştirildi.",
-  //     "address": {
-  //       "district": "Selçuklu",
-  //       "city": "Konya",
-  //       "openAddress": "Mevlana Cd. No:19",
-  //       "postalCode": "42060"
-  //     },
-  //     "orderItems": [
-  //       {
-  //         "product": {
-  //           "name": "USB-C Şarj Kablosu",
-  //           "description": "1.5 metre uzunluk, hızlı şarj destekli.",
-  //           "mainImage": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_143826918?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190",
-  //           "district": "Selçuklu",
-  //           "city": "Konya",
-  //           "sellerPhone": "0532 111 2233",
-  //           "discountedPrice": 49.90
-  //         }
-  //       }
-  //     ]
-  //   }
-  // ]
-
   constructor(
     private alertController: AlertController,
     private ordersService: OrdersService,
     private addressService: AddressService,
-    private authService: AuthService
+    private authService: AuthService,
+    private mailService: MailService,
+    private logger: LoggerService
   ) { }
 
   ngOnInit() {
     this.currentUserId = this.authService.getCurrentUserId();
     this.currentUserRole = this.authService.getCurrentRoles();
-    // console.log(this.currentUserRole)
-
+    this.logger.info('MyOrdersPage ngOnInit', { currentUserId: this.currentUserId, currentUserRole: this.currentUserRole });
     this.ordersService.getOrdersByUserId(this.currentUserId).subscribe(data => {
       data.forEach((item: any) => {
-        let order: any = {}
+        let order: any = {};
         this.addressService.getAddressById(item.addressId).subscribe(address => {
-          item.address = address
-          this.orders = data
-          console.log(data)
-        })
+          item.address = address;
+          this.orders = data;
+          this.logger.info('User orders loaded', data);
+        });
         item.orderItems.forEach((orderItem: any) => {
           this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
-            orderItem.product.sellerPhone = user.phoneNumber
-          })
-        })
-      })
-    })
-
+            orderItem.product.sellerPhone = user.phoneNumber;
+            this.logger.info('Seller loaded for order item', user);
+          });
+        });
+      });
+    });
     this.ordersService.getAllOrders().subscribe(data => {
       data.forEach((item: any) => {
         this.addressService.getAddressById(item.addressId).subscribe(address => {
-          item.address = address
-          // console.log(data)
-        })
-        item.orderItems = item.orderItems.filter((p: any) => p.product.sellerUserId == this.currentUserId)
+          item.address = address;
+        });
+        item.orderItems = item.orderItems.filter((p: any) => p.product.sellerUserId == this.currentUserId);
         item.orderItems.forEach((orderItem: any) => {
           this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
-            orderItem.product.sellerPhone = user.phoneNumber
-          })
-        })
+            orderItem.product.sellerPhone = user.phoneNumber;
+            this.logger.info('Seller loaded for incoming order item', user);
+          });
+        });
         if (item.orderItems.length > 0) {
-          this.incomingOrders.push(item)
+          this.incomingOrders.push(item);
         }
-      })
-
-      this.allOrders = data
-      // console.log("this.allOrders => ", this.allOrders)
-    })
+      });
+      this.allOrders = data;
+      this.logger.info('All orders loaded', data);
+    });
   }
 
-  orderShipped(order: Order | any, pid:number | undefined) {
+  orderShipped(order: Order | any, pid: number | undefined) {
     this.ordersService.updateOrderToShippedProductById(order.id, order, pid).subscribe(data => {
-      order.status = 2
+      order.status = 2;
+      this.logger.info('Order shipped', { orderId: order.id });
+      // Send mail to buyer with detailed HTML
+      this.authService.getUser(order.userId).subscribe(user => {
+        const productsHtml = `
+          <table style='width: 100%; border: 1px solid #000; border-collapse: collapse;'>
+            <thead>
+              <tr>
+                <th style='padding: 8px; text-align: left;'>Product Name</th>
+                <th style='padding: 8px; text-align: left;'>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${order.orderItems.map((item: any) => `
+                <tr>
+                  <td style='padding: 8px;'>${item.product?.name}</td>
+                  <td style='padding: 8px;'>${item.product?.discountedPrice} TL</td>
+                </tr>
+              `).join('')}
+              <tr>
+                <td colspan='2' style='padding: 8px; text-align: right; font-weight: bold;'>Total Price: ${order.orderItems.reduce((sum: number, item: any) => sum + (item.product?.discountedPrice ?? 0), 0)} TL</td>
+              </tr>
+            </tbody>
+          </table>
+          <br/>
+          <b>Address Information:</b><br/>
+          <table style='width: 100%; border: 1px solid #000; border-collapse: collapse; margin-top: 10px;'>
+            <tr>
+              <td style='padding: 8px; font-weight: bold;'>City:</td>
+              <td style='padding: 8px;'>${order.address?.city}</td>
+            </tr>
+            <tr>
+              <td style='padding: 8px; font-weight: bold;'>District:</td>
+              <td style='padding: 8px;'>${order.address?.district}</td>
+            </tr>
+            <tr>
+              <td style='padding: 8px; font-weight: bold;'>Address:</td>
+              <td style='padding: 8px;'>${order.address?.openAddress}</td>
+            </tr>
+            <tr>
+              <td style='padding: 8px; font-weight: bold;'>Postal Code:</td>
+              <td style='padding: 8px;'>${order.address?.postalCode}</td>
+            </tr>
+          </table>
+          <br/>
+          Your order #${order.id} has been shipped. You can track your order from your account.<br/><br/>
+          Thank you for shopping with Localmart!<br/><br/>Localmart Team
+        `;
+        const mail: Mail = {
+          to: user.email,
+          subject: 'Localmart | Your order has been shipped.',
+          body: productsHtml
+        };
+        this.mailService.sendMail(mail).subscribe(
+          () => this.logger.info('Mail sent to buyer for shipped order', { orderId: order.id }),
+          error => this.logger.error('Error sending mail to buyer for shipped order', error)
+        );
+      });
       this.alertController.create({
-        header: 'Başarılı!',
-        message: 'Ürün Kargoya Verilmiştir',
-        buttons: ['Tamam']
+        header: 'Success!',
+        message: 'Product has been shipped.',
+        buttons: ['OK']
       }).then(successAlert => successAlert.present());
-    })
+    });
   }
 
-  orderDelivered(order: Order | any, pid:number | undefined) {
+  orderDelivered(order: Order | any, pid: number | undefined) {
     this.ordersService.updateOrderToDeliveredProductById(order.id, order, pid).subscribe(data => {
-      order.status = 3
+      order.status = 3;
+      this.logger.info('Order delivered', { orderId: order.id });
+      // Send mail to seller with detailed HTML
+      if (order.orderItems && order.orderItems.length > 0) {
+        const sellerId = order.orderItems[0].product.sellerUserId;
+        this.authService.getUser(sellerId).subscribe(user => {
+          const sellerItems = order.orderItems.filter((item: any) => item.product.sellerUserId === sellerId);
+          const newTotalPrice = sellerItems.reduce((sum: number, item: any) => sum + (item.product?.discountedPrice ?? 0), 0);
+          const productsHtml = `
+            <table style='width: 100%; border: 1px solid #000; border-collapse: collapse;'>
+              <thead>
+                <tr>
+                  <th style='padding: 8px; text-align: left;'>Product Name</th>
+                  <th style='padding: 8px; text-align: left;'>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${sellerItems.map((item: any) => `
+                  <tr>
+                    <td style='padding: 8px;'>${item.product?.name}</td>
+                    <td style='padding: 8px;'>${item.product?.discountedPrice} TL</td>
+                  </tr>
+                `).join('')}
+                <tr>
+                  <td colspan='2' style='padding: 8px; text-align: right; font-weight: bold;'>Total Price: ${newTotalPrice} TL</td>
+                </tr>
+              </tbody>
+            </table>
+            <br/>
+            <b>Address Information:</b><br/>
+            <table style='width: 100%; border: 1px solid #000; border-collapse: collapse; margin-top: 10px;'>
+              <tr>
+                <td style='padding: 8px; font-weight: bold;'>City:</td>
+                <td style='padding: 8px;'>${order.address?.city}</td>
+              </tr>
+              <tr>
+                <td style='padding: 8px; font-weight: bold;'>District:</td>
+                <td style='padding: 8px;'>${order.address?.district}</td>
+              </tr>
+              <tr>
+                <td style='padding: 8px; font-weight: bold;'>Address:</td>
+                <td style='padding: 8px;'>${order.address?.openAddress}</td>
+              </tr>
+              <tr>
+                <td style='padding: 8px; font-weight: bold;'>Postal Code:</td>
+                <td style='padding: 8px;'>${order.address?.postalCode}</td>
+              </tr>
+            </table>
+            <br/>
+            Your product in order #${order.id} has been delivered to the buyer.<br/><br/>
+            Thank you for using Localmart!<br/><br/>Localmart Team
+          `;
+          const mail: Mail = {
+            to: user.email,
+            subject: 'Localmart | Your product has been delivered.',
+            body: productsHtml
+          };
+          this.mailService.sendMail(mail).subscribe(
+            () => this.logger.info('Mail sent to seller for delivered order', { orderId: order.id }),
+            error => this.logger.error('Error sending mail to seller for delivered order', error)
+          );
+        });
+      }
       this.alertController.create({
-        header: 'Başarılı!',
-        message: 'Ürün Teslim Alınmıştır',
-        buttons: ['Tamam']
+        header: 'Success!',
+        message: 'Product has been delivered.',
+        buttons: ['OK']
       }).then(successAlert => successAlert.present());
-    })
+    });
   }
-
-  // orderShipped(order: any){
-  // }
-
-  // orderDelivered(order: any){
-
-  // }
-
 }

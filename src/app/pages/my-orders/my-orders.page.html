@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Siparişlerim</ion-title>
+    <ion-title>My Orders</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,16 +11,16 @@
   <div class="orders">
     <div class="sub-title ion-padding">
       <ion-text color="warning">
-        <strong>SATICI OLARAK</strong>
+        <strong>AS SELLER</strong>
       </ion-text>
     </div>
     <ion-note *ngIf="incomingOrders.length === 0" color="dark" class="ion-padding">
-      <ion-icon name="information-circle-outline"></ion-icon> Siparişiniz bulunmamaktadır.
+      <ion-icon name="information-circle-outline"></ion-icon> No orders found.
     </ion-note>
 
     <ion-card *ngFor="let order of incomingOrders" class="ion-padding">
       <ion-card-header>
-        <ion-card-title>Sipariş No: {{ order.id }}</ion-card-title>
+        <ion-card-title>Order No: {{ order.id }}</ion-card-title>
         <ion-card-subtitle *ngIf="order.note" class="ion-margin-bottom"><ion-icon
             name="information-circle-outline"></ion-icon> {{ order.note }}</ion-card-subtitle>
       </ion-card-header>
@@ -48,7 +48,7 @@
           <ion-label class="see-all">
             <strong>{{ order.address?.district }} / {{ order.address?.city }}</strong><br>
             {{ order.address?.openAddress }}<br>
-            <small>Posta Kodu: {{ order.address?.postalCode }}</small>
+            <small>Postal Code: {{ order.address?.postalCode }}</small>
           </ion-label>
         </ion-item>
 
@@ -67,17 +67,18 @@
             <ng-container [ngSwitch]="item.status">
 
               <ng-container *ngSwitchCase="'1'">
-                <ion-button fill="outline" color="medium" disabled>Hazırlanıyor...</ion-button>
-                <ion-button expand="block" color="primary" (click)="orderShipped(order, item.productId)">Kargoya Verildii</ion-button>
+                <ion-button fill="outline" color="medium" disabled>Preparing...</ion-button>
+                <ion-button expand="block" color="primary"
+                  (click)="orderShipped(order, item.productId)">Shipped</ion-button>
               </ng-container>
 
               <ng-container *ngSwitchCase="'2'">
-                <ion-button fill="outline" color="primary" disabled>Kargoya Verildi</ion-button>
-                <ion-button fill="outline" color="medium" disabled>Teslim Bekleniyor</ion-button>
+                <ion-button fill="outline" color="primary" disabled>Shipped</ion-button>
+                <ion-button fill="outline" color="medium" disabled>Awaiting Delivery</ion-button>
               </ng-container>
 
               <ng-container *ngSwitchCase="'3'">
-                <ion-button color="success" disabled>Teslim Edilmiştir</ion-button>
+                <ion-button color="success" disabled>Delivered</ion-button>
               </ng-container>
 
             </ng-container>
@@ -90,16 +91,16 @@
   <div class="orders ion-margin-top">
     <div class="sub-title ion-padding">
       <ion-text color="warning">
-        <strong>ALICI OLARAK</strong>
+        <strong>AS BUYER</strong>
       </ion-text>
     </div>
     <ion-note *ngIf="orders.length === 0" color="dark" class="ion-padding">
-      <ion-icon name="information-circle-outline"></ion-icon> Siparişiniz bulunmamaktadır.
+      <ion-icon name="information-circle-outline"></ion-icon> No orders found.
     </ion-note>
 
     <ion-card *ngFor="let order of orders" class="ion-padding">
       <ion-card-header>
-        <ion-card-title class="ion-margin-bottom">Sipariş No: {{ order.id }}</ion-card-title>
+        <ion-card-title class="ion-margin-bottom">Order No: {{ order.id }}</ion-card-title>
       </ion-card-header>
 
       <ion-card-content *ngFor="let item of order.orderItems" class="ion-margin-top ion-no-padding">
@@ -136,7 +137,7 @@
           <ion-label class="see-all">
             <strong>{{ order.address?.district }} / {{ order.address?.city }}</strong><br>
             {{ order.address?.openAddress }}<br>
-            <small>Posta Kodu: {{ order.address?.postalCode }}</small>
+            <small>Postal Code: {{ order.address?.postalCode }}</small>
           </ion-label>
         </ion-item>
 
@@ -149,14 +150,15 @@
           <ion-buttons slot="end">
             <ng-container [ngSwitch]="item.status">
               <ng-container *ngSwitchCase="'1'">
-                <ion-button fill="outline" color="medium" disabled>Hazırlanıyor...</ion-button>
+                <ion-button fill="outline" color="medium" disabled>Preparing...</ion-button>
               </ng-container>
               <ng-container *ngSwitchCase="'2'">
-                <ion-button fill="outline" color="primary" disabled>Kargoya Verildi</ion-button>
-                <ion-button fill="outline" color="medium" (click)="orderDelivered(order, item.productId)">Teslim Aldım</ion-button>
+                <ion-button fill="outline" color="primary" disabled>Shipped</ion-button>
+                <ion-button fill="outline" color="medium"
+                  (click)="orderDelivered(order, item.productId)">Delivered</ion-button>
               </ng-container>
               <ng-container *ngSwitchCase="'3'">
-                <ion-button color="success" disabled>Teslim Alınmıştır</ion-button>
+                <ion-button color="success" disabled>Delivered</ion-button>
               </ng-container>
             </ng-container>
           </ion-buttons>

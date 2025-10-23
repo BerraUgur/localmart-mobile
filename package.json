@@ -1,5 +1,5 @@
 {
-  "name": "ionic-project",
+  "name": "localmart",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@capacitor/android": "^7.2.0",
+    "@capacitor/android": "4.7.3",
     "@capacitor/app": "4.1.1",
     "@capacitor/core": "4.7.3",
     "@capacitor/haptics": "4.1.0",
@@ -66,5 +66,5 @@
     "ts-node": "~8.3.0",
     "typescript": "~4.8.4"
   },
-  "description": "An Ionic project"
+  "description": "Localmart mobile app"
 }

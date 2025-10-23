@@ -1,14 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { CustomComment } from 'src/app/shared/services/comment';
-import { CommentService } from 'src/app/shared/services/comment.service';
-import { Product } from 'src/app/shared/services/product';
-import { ProductService } from 'src/app/shared/services/product.service';
-
+import { AuthService } from 'src/app/services/auth.service';
+import { LoggerService } from 'src/app/services/logger.service';
+import { CustomComment } from 'src/app/models/comment';
+import { CommentService } from 'src/app/services/comment.service';
+import { Product } from 'src/app/models/product';
+import { ProductService } from 'src/app/services/product.service';
 import Swiper from 'swiper';
 
 @Component({
@@ -32,30 +30,14 @@ export class productDetailPage implements OnInit, AfterViewInit {
   productMainImgs?: Swiper | any;
   productOtherImgs?: Swiper | any;
 
-  // products:any = [
-  //   { id: 1, name: 'iPhone 16 Pro 1TB Akıllı Telefon Natural Titanium MYNX3TU/A', description: 'iPhone 16 Pro 1TB Akıllı Telefon Natural Titanium MYNX3TU/A', price: '129.999', discountedPrice: '99.999', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_144721927?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
-  //   { id: 2, name: 'GRUNDIG GDH 92 PKS A++ Enerji Sınıfı 9 kg Isı Pompalı Kurutma', description: 'GRUNDIG GDH 92 PKS A++ Enerji Sınıfı 9 kg Isı Pompalı Kurutma', price: '20.999', discountedPrice: '16.399', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_133515701?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
-  //   { id: 3, name: 'LENOVO Tab 10.1 inç 4/128GB WUXGA Tablet + Kılıf ZAEH0039TR', description: 'LENOVO Tab 10.1 inç 4/128GB WUXGA Tablet + Kılıf ZAEH0039TR', price: '7.499', discountedPrice: '5.499', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_149860847?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
-  //   { id: 4, name: 'APPLE MW0Y3TU/A/MacBook Air/Apple M4 İşlemci', description: 'APPLE MW0Y3TU/A/MacBook Air/Apple M4 İşlemci', price: '6.999', discountedPrice: '5.499', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_151160138?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
-  //   { id: 5, name: 'WINIX Zero Compact Hava Temizleme Cihazı Siyah Beyaz', description: 'WINIX Zero Compact Hava Temizleme Cihazı Siyah Beyaz', price: '6.999', discountedPrice: '6.499', mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_143826918?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'},
-  // ];
-
-  // product:any = {} 
-  // product:any = { 
-  //   name: 'iPhone 16 Pro 1TB Akıllı Telefon Natural Titanium MYNX3TU/A',
-  //   description: 'iPhone 16 Pro 1TB Akıllı Telefon Natural Titanium MYNX3TU/A',
-  //   price: '129.999',
-  //   discountedPrice: '99.999',
-  //   mainImage: 'https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_144721927?x=280&y=190&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=280&ey=190&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=280&cdy=190'
-  // }
-
   constructor(
     private route: ActivatedRoute,
     private alertController: AlertController,
     private router: Router,
     private productService: ProductService,
     private commentService: CommentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private logger: LoggerService
   ) { }
 
   ngOnInit() {
@@ -68,20 +50,18 @@ export class productDetailPage implements OnInit, AfterViewInit {
         if (product) {
           this.product = product;
           this.comments = product.comments;
-          console.log('Product fetched successfully', product);
-
+          this.logger.info('Product loaded', product);
           this.authService.getUser(product.sellerUserId).subscribe((user) => {
-            this.seller = user
-            console.log("this.seller => ", this.seller)
-          })
-
+            this.seller = user;
+            this.logger.info('Seller loaded', user);
+          });
           this.initializeSwipers();
         } else {
-          console.error('Product not found');
+          this.logger.error('Product not found', { productId });
         }
       },
       error => {
-        console.error('Error fetching product details', error);
+        this.logger.error('Error fetching product details', error);
       }
     );
 
@@ -92,21 +72,18 @@ export class productDetailPage implements OnInit, AfterViewInit {
     }
   }
 
-  logout() {
-  }
-
   async addToCart(productId: number | any) {
     if (!this.isLogging) {
       const alert = await this.alertController.create({
-        header: 'Uyarı!',
-        message: 'Sepete eklemek için giriş yapmalısınız.',
+        header: 'Warning!',
+        message: 'You must be logged in to add to basket.',
         buttons: [
           {
-            text: 'İptal',
+            text: 'Cancel',
             role: 'cancel'
           },
           {
-            text: 'Giriş Yap',
+            text: 'Login',
             handler: () => {
               this.router.navigate(['/login']);
             }
@@ -119,9 +96,9 @@ export class productDetailPage implements OnInit, AfterViewInit {
 
     if (this.currentRole == "Admin") {
       const warningAlert = await this.alertController.create({
-        header: 'Uyarı!',
-        message: 'Admin kullanıcılar sepete ürün ekleyemez.',
-        buttons: ['Tamam']
+        header: 'Warning!',
+        message: 'Admin users cannot add products to basket.',
+        buttons: ['OK']
       });
       await warningAlert.present();
       return;
@@ -130,9 +107,9 @@ export class productDetailPage implements OnInit, AfterViewInit {
     for (let i = 0; i < this.currentBasket.length; i++) {
       if (this.currentBasket[i].productId === productId) {
         const warningAlert = await this.alertController.create({
-          header: 'Uyarı!',
-          message: 'Ürün sepetinizde zaten mevcut.',
-          buttons: ['Tamam']
+          header: 'Warning!',
+          message: 'Product is already in your basket.',
+          buttons: ['OK']
         });
         await warningAlert.present();
         return;
@@ -141,11 +118,11 @@ export class productDetailPage implements OnInit, AfterViewInit {
 
     if (this.currentUserId == this.product?.sellerUserId) {
       this.alertController.create({
-        header: 'Uyarı!',
-        message: 'Kendi ürününüzü sepete ekleyemezsiniz.',
-        buttons: ['Tamam']
+        header: 'Warning!',
+        message: 'You cannot add your own product to basket.',
+        buttons: ['OK']
       }).then(successAlert => successAlert.present());
-      return
+      return;
     }
 
     this.currentBasket.push({
@@ -156,27 +133,15 @@ export class productDetailPage implements OnInit, AfterViewInit {
     localStorage.setItem('basket', JSON.stringify(this.currentBasket));
 
     const successAlert = await this.alertController.create({
-      header: 'Başarılı!',
-      message: 'Ürün sepete eklendi.',
-      buttons: ['Tamam']
+      header: 'Success!',
+      message: 'Product added to basket.',
+      buttons: ['OK']
     });
     await successAlert.present();
   }
 
-
   addComment() {
     if (this.product) {
-      // let currentUser: User | any;
-      // this.authService.getUser(this.authService.getCurrentUserId()).subscribe(
-      //   (data: User) => {
-      //     currentUser = data;
-      //   },
-      //   error => {
-      //     console.error('Cant find user', error);
-      //   }
-      // );
-      // console.log(currentUser)
-
       const newComment: CustomComment = {
         content: this.comment, productId: this.product.id, userId: this.authService.getCurrentUserId(),
       };
@@ -184,10 +149,10 @@ export class productDetailPage implements OnInit, AfterViewInit {
         (data: CustomComment) => {
           location.reload();
           this.comments?.push(data);
-          console.log('Comment added successfully', data);
+          this.logger.info('Comment added successfully', data);
         },
         error => {
-          console.error('Error adding comment', error);
+          this.logger.error('Error adding comment', error);
         }
       );
     }
@@ -197,33 +162,35 @@ export class productDetailPage implements OnInit, AfterViewInit {
     this.commentService.deleteComment(commentId).subscribe(
       () => {
         this.comments = this.comments?.filter(comment => comment.id !== commentId);
+        this.logger.info('Comment deleted', { commentId });
       },
       error => {
-        console.error('Error deleting comment:', error);
+        this.logger.error('Error deleting comment', error);
       }
     );
   }
 
   async deleteProduct(productId: any) {
     const alert = await this.alertController.create({
-      header: 'Emin misiniz?',
-      message: 'Bu ürünü silmek istediğinize emin misiniz?',
+      header: 'Are you sure?',
+      message: 'Are you sure you want to delete this product?',
       buttons: [
         {
-          text: 'İptal',
+          text: 'Cancel',
           role: 'cancel'
         },
         {
-          text: 'Evet',
+          text: 'Yes',
           handler: () => {
             this.productService.deleteProduct(productId).subscribe(
               () => {
+                this.logger.info('Product deleted', { productId });
                 this.alertController.create({
-                  header: 'Başarılı!',
-                  message: `Ürünü başarıyla silinmiştir.`,
-                  buttons: ['Tamam']
+                  header: 'Success!',
+                  message: `Product deleted successfully.`,
+                  buttons: ['OK']
                 }).then(successAlert => {
-                  successAlert.present()
+                  successAlert.present();
                   this.router.navigate(['/products']).then(() => {
                     setTimeout(() => {
                       location.reload();
@@ -232,14 +199,13 @@ export class productDetailPage implements OnInit, AfterViewInit {
                 });
               },
               error => {
-                console.error('Error deleting user:', error);
+                this.logger.error('Error deleting product', error);
               }
             );
           }
         }
       ]
     });
-
     await alert.present();
   }
 
@@ -258,7 +224,6 @@ export class productDetailPage implements OnInit, AfterViewInit {
       on: {
         slideChange: () => {
           const activeIndex = this.productMainImgs.activeIndex;
-          // console.log('Active index:', activeIndex);
           this.productOtherImgs.slideTo(activeIndex);
           this.updateThumbnailActiveClass(activeIndex);
         }
@@ -294,5 +259,4 @@ export class productDetailPage implements OnInit, AfterViewInit {
       slide.classList.toggle('active', index === activeIndex);
     });
   }
-
 }

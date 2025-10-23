@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { Product } from 'src/app/shared/services/product';
-import { ProductService } from 'src/app/shared/services/product.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { LoggerService } from 'src/app/services/logger.service';
+import { Product } from 'src/app/models/product';
+import { ProductService } from 'src/app/services/product.service';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -29,7 +30,8 @@ export class ProductUpdatePage implements OnInit {
     private fb: FormBuilder,
     private productService: ProductService,
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private logger: LoggerService
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -50,18 +52,16 @@ export class ProductUpdatePage implements OnInit {
     this.productService.getProductById(this.productId).subscribe(
       (product: Product | null) => {
         if (product) {
-          console.log(product);
-          console.log("this.mainImage =>", product.mainImage)
+          this.logger.info('Product loaded', product);
           this.mainImage = product.mainImage;
           this.imagesArr = product.images;
           this.productForm.patchValue(product);
         }
       },
       error => {
-        console.error('Error fetching product details', error);
+        this.logger.error('Error fetching product details', error);
       }
     );
-
     this.currentUserId = this.authService.getCurrentUserId();
 
   }
@@ -70,9 +70,10 @@ export class ProductUpdatePage implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.convertToBase64(file).then(base64 => {
-        this.isNewMainImg = true
+        this.isNewMainImg = true;
         this.productForm.patchValue({ mainImage: base64 });
         this.mainImage = base64;
+        this.logger.info('Main image selected', { fileName: file.name });
       });
     }
   }
@@ -83,17 +84,15 @@ export class ProductUpdatePage implements OnInit {
     this.imagesArr = [];
     this.isNewOtherImg = true
     for (let i = 0; i < files.length; i++) {
-      console.log(files[i])
       this.convertToBase64(files[i]).then(base64 => {
         newImages.push(base64);
         this.imagesArr.push(base64);
+        this.logger.info('Other image selected', { fileName: files[i].name });
       });
     }
     setTimeout(() => {
-      // this.productForm.patchValue({ images: newImages });
       this.productForm.patchValue({ images: newImages });
-      console.log(newImages)
-      console.log(this.productForm)
+      this.logger.debug('Images array updated', newImages);
     }, 100);
   }
 
@@ -107,7 +106,6 @@ export class ProductUpdatePage implements OnInit {
   }
 
   updateProduct() {
-    // Formun geçerli olup olmadığını ve gerekli alanların dolu olup olmadığını kontrol et
     const controls = this.productForm.controls;
     if (
       !controls['name'].value ||
@@ -122,9 +120,9 @@ export class ProductUpdatePage implements OnInit {
       (Array.isArray(controls['images'].value) && controls['images'].value.length === 0)
     ) {
       this.alertController.create({
-        header: 'Uyarı',
-        message: 'Lütfen tüm alanları doldurunuz.',
-        buttons: ['Tamam']
+        header: 'Warning',
+        message: 'Please fill in all fields.',
+        buttons: ['OK']
       }).then(alert => alert.present());
       return;
     }
@@ -132,11 +130,11 @@ export class ProductUpdatePage implements OnInit {
       this.productForm.value.id = this.productId;
       this.productService.updateProduct(this.productId!, this.productForm.value).subscribe(
         async response => {
-          console.log('Product updated successfully', response);
+          this.logger.info('Product updated successfully', response);
           const succesAlert = await this.alertController.create({
-            header: 'Başarılı!',
-            message: 'Ürün başarıyla kaydedildi.',
-            buttons: ['Tamam']
+            header: 'Success!',
+            message: 'Product updated successfully.',
+            buttons: ['OK']
           });
           await succesAlert.present();
           this.router.navigate(['/products']).then(() => {
@@ -146,7 +144,7 @@ export class ProductUpdatePage implements OnInit {
           });
         },
         error => {
-          console.error('Error updating product', error);
+          this.logger.error('Error updating product', error);
         }
       );
     }

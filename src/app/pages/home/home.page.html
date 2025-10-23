@@ -1,0 +1,47 @@
+<ion-header class=" 'ion-no-border">
+  <ion-toolbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="ion-no-margin">
+    <div class="shape"></div>
+    <ion-card-header>
+      <ion-card-title class="ion-h">
+        Discover Products <br> Near You.
+      </ion-card-title>
+      <ion-card-subtitle class="ion-txt" style="text-transform: none;">
+        "With the Localmart app, you can view, buy, or sell products closest to your region."
+        <br><br>
+        CONTACT
+        <br><br>
+        Email: <span style="text-transform: lowercase;">localmart&#64;gmail.com</span>
+        <br><br>
+        Phone: +90 (532) 555 55 55
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <br>
+    <div class="text-center ion-margin-top" *ngIf="isLoggedIn">Welcome {{currentUser?.username}}; <br> You are logged in
+      as {{ currentRoleText }}.</div>
+
+    <ion-card-content>
+      <div class="signin-btns">
+        <ion-button *ngIf="!isLoggedIn" routerLink="/register" size="small" fill="outline" shape="round" color="dark"
+          color="warning">Register</ion-button>
+        <ion-button *ngIf="!isLoggedIn" routerLink="/login" size="small" fill="outline" shape="round" color="warning"
+          class="loginbtn" color="warning">Login</ion-button>
+        <ion-button *ngIf="isLoggedIn" (click)="logOut()" size="small" fill="outline" shape="round" color="warning"
+          color="warning">Logout</ion-button>
+        <ion-button routerLink="/products" size="small" fill="solid" shape="round" color="warning" class="full"
+          color="warning">Products</ion-button>
+        <ion-button *ngIf="currentRole === 'Admin'" routerLink="/user-list" size="small" fill="solid" shape="round"
+          color="warning" class="full" color="warning">Users</ion-button>
+        <ion-button *ngIf="isLoggedIn && currentRole !== 'Admin' && currentRole !== 'User'" routerLink="/basket"
+          size="small" fill="solid" shape="round" color="warning" class="full" color="warning">Basket</ion-button>
+        <ion-button *ngIf="isLoggedIn && currentRole !== 'Admin' && currentRole !== 'User'" routerLink="/my-orders"
+          size="small" fill="solid" shape="round" color="warning" class="full" color="warning">My Orders</ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

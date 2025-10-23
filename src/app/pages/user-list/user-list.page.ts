@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { Role, User } from 'src/app/shared/services/comment';
+import { AuthService } from 'src/app/services/auth.service';
+import { LoggerService } from 'src/app/services/logger.service';
+import { Role, User } from 'src/app/models/comment';
 
 @Component({
   selector: 'app-user-list',
@@ -11,37 +12,25 @@ import { Role, User } from 'src/app/shared/services/comment';
 export class UserListPage implements OnInit {
 
   users: User[] = [];
-  Role:any | Role;
+  Role: any | Role;
   nousers: boolean = false;
-  constructor(private authService: AuthService, private alertController: AlertController) {
-    console.log('constructor');
+  constructor(private authService: AuthService, private alertController: AlertController, private logger: LoggerService) {
+    this.logger.info('UserListPage initialized');
   }
 
-  // users: any = [
-  //   { id: 1, firstName: 'Ahmet', lastName: 'Yılmaz', username: 'ahmety', email: 'ahmet@example.com', phoneNumber: '05331234567', role: 1 },
-  //   { id: 2, firstName: 'Ayşe', lastName: 'Demir', username: 'ayse_d', email: 'ayse@example.com', phoneNumber: '05339876543', role: 2 },
-  //   { id: 3, firstName: 'Mehmet', lastName: 'Kaya', username: 'mkaya', email: 'mehmet@example.com', phoneNumber: '05551234567', role: 3 },
-  //   { id: 4, firstName: 'Elif', lastName: 'Çelik', username: 'elifc', email: 'elif@example.com', phoneNumber: '05441234567', role: 1 },
-  //   { id: 5, firstName: 'Mustafa', lastName: 'Öztürk', username: 'mustafao', email: 'mustafa@example.com', phoneNumber: '05321234567', role: 2 },
-  //   { id: 6, firstName: 'Zeynep', lastName: 'Koç', username: 'zeynepk', email: 'zeynep@example.com', phoneNumber: '05001234567', role: 1 },
-  //   { id: 7, firstName: 'Fatma', lastName: 'Yıldız', username: 'fatmay', email: 'fatma@example.com', phoneNumber: '05231234567', role: 3 },
-  //   { id: 8, firstName: 'Burak', lastName: 'Aydın', username: 'buraka', email: 'burak@example.com', phoneNumber: '05361234567', role: 2 },
-  //   { id: 9, firstName: 'Hülya', lastName: 'Erdoğan', username: 'hulyae', email: 'hulya@example.com', phoneNumber: '05431234567', role: 1 },
-  //   { id: 10, firstName: 'Emre', lastName: 'Şahin', username: 'emres', email: 'emre@example.com', phoneNumber: '05391234567', role: 2 }
-  // ];
-  
   ngOnInit() {
-    console.log('ngOnInit');
+    this.logger.info('UserListPage ngOnInit');
     this.authService.getUserList().subscribe(
       (data: User[]) => {
         this.users = data;
-        console.log('Users fetched successfully', data);
+        this.logger.info('Users fetched successfully', data);
       },
       async error => {
+        this.logger.error('Error fetching users', error);
         const warningAlert = await this.alertController.create({
-          header: 'Uyarı!',
-          message: 'Kullanıcıları getirirken bir hata oluştu.', 
-          buttons: ['Tamam']
+          header: 'Warning!',
+          message: 'An error occurred while fetching users.',
+          buttons: ['OK']
         });
         await warningAlert.present();
       }
@@ -50,41 +39,35 @@ export class UserListPage implements OnInit {
 
   async deleteUser(userId: number) {
     const alert = await this.alertController.create({
-      header: 'Emin misiniz?',
-      message: 'Bu kullanıcıyı silmek istediğinize emin misiniz?',
+      header: 'Are you sure?',
+      message: 'Are you sure you want to delete this user?',
       buttons: [
         {
-          text: 'İptal',
+          text: 'Cancel',
           role: 'cancel'
         },
         {
-          text: 'Evet',
+          text: 'Yes',
           handler: () => {
             this.authService.deleteUser(userId).subscribe(
               () => {
-                let deletedUser = this.users?.find(user => user.id == userId)
-                
+                let deletedUser = this.users?.find(user => user.id == userId);
+                this.logger.info('User deleted', deletedUser);
                 this.alertController.create({
-                  header: 'Başarılı!',
-                  message: `${deletedUser?.firstName} ${deletedUser?.lastName} Kullanıcı başarıyla silindi.`,
-                  buttons: ['Tamam']
+                  header: 'Success!',
+                  message: `${deletedUser?.firstName} ${deletedUser?.lastName} was deleted successfully.`,
+                  buttons: ['OK']
                 }).then(successAlert => successAlert.present());
-
                 this.users = this.users?.filter(user => user.id !== userId);
               },
               error => {
-                console.error('Error deleting user:', error);
+                this.logger.error('Error deleting user', error);
               }
             );
-
           }
         }
       ]
     });
-  
     await alert.present();
   }
-
-  
-  
 }

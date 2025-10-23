@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="products" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Ürün Güncelle</ion-title>
+    <ion-title>Update Product</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,13 +14,11 @@
         value="{{currentUserId}}">
       <ion-row class="ion-padding">
         <ion-col (click)="clickNextInput($event)">
-          <ion-button shape="full" expand="block" color="warning" fill="outline">Ana Görsel</ion-button>
-          <!-- <input class="d-none" type="file" accept="image/*" (change)="onMainImageSelected($event)" /> -->
+          <ion-button shape="full" expand="block" color="warning" fill="outline">Main Image</ion-button>
           <input class="d-none" type="file" accept="image/*" (change)="onMainImageSelected($event)" />
         </ion-col>
         <ion-col (click)="clickNextInput($event)">
-          <ion-button shape="full" expand="block" color="warning" fill="outline">Diğer Görseller</ion-button>
-          <!-- <input class="d-none" type="file" multiple accept="image/*" (change)="onOtherImagesSelected($event)" /> -->
+          <ion-button shape="full" expand="block" color="warning" fill="outline">Other Images</ion-button>
           <input class="d-none" type="file" multiple accept="image/*" (change)="onImagesSelected($event)" />
         </ion-col>
       </ion-row>
@@ -42,36 +40,36 @@
       </ion-row>
 
       <ion-item>
-        <ion-label position="floating">Ürünün Adı:</ion-label>
+        <ion-label position="floating">Product Name:</ion-label>
         <ion-input formControlName="name" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Stok Adedi:</ion-label>
+        <ion-label position="floating">Stock Quantity:</ion-label>
         <ion-input formControlName="stock" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Ürün Fiyatı:</ion-label>
+        <ion-label position="floating">Product Price:</ion-label>
         <ion-input formControlName="discountedPrice" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Eski Fiyat:</ion-label>
+        <ion-label position="floating">Old Price:</ion-label>
         <ion-input formControlName="price" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Ürün Açıklaması:</ion-label>
+        <ion-label position="floating">Product Description:</ion-label>
         <ion-input formControlName="description" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">İl:</ion-label>
+        <ion-label position="floating">City:</ion-label>
         <ion-input formControlName="city" type="text" required></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">İlçe:</ion-label>
+        <ion-label position="floating">District:</ion-label>
         <ion-input formControlName="district" type="text" required></ion-input>
       </ion-item>
       <ion-row>
         <ion-col>
-          <ion-button type="submit" color="warning" shape="full" expand="block">Güncelle</ion-button>
+          <ion-button type="submit" color="warning" shape="full" expand="block">Update</ion-button>
         </ion-col>
       </ion-row>
     </form>

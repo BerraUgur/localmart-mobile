@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { RegisterRequest } from 'src/app/shared/services/registerRequest';
+import { AuthService } from 'src/app/services/auth.service';
+import { LoggerService } from 'src/app/services/logger.service';
+import { RegisterRequest } from 'src/app/models/registerRequest';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { RegisterRequest } from 'src/app/shared/services/registerRequest';
 })
 export class RegisterPage implements OnInit {
 
-  constructor(private http: HttpClient, private router: Router, public authService: AuthService, private alertController: AlertController) { }
+  constructor(private http: HttpClient, private router: Router, public authService: AuthService, private alertController: AlertController, private logger: LoggerService) { }
 
   public firstName: any = '';
   public lastName: any = '';
@@ -25,36 +26,39 @@ export class RegisterPage implements OnInit {
   }
 
   async register() {
-    console.log('this.userName => ', this.userName)
-    if (this.userName == '' || this.email == '' || this.password == '' || this.firstName == '' || this.lastName == '' || this.phoneNumber == '') {
+    this.logger.info('Register attempt', {
+      userName: this.userName,
+      email: this.email
+    });
+    if (this.userName === '' || this.email === '' || this.password === '' || this.firstName === '' || this.lastName === '' || this.phoneNumber === '') {
+      this.logger.warn('Register failed: missing fields');
       const warningAlert = await this.alertController.create({
-        header: 'Uyarı!',
-        message: 'Lütfen tüm alanları doldurun.',
-        buttons: ['Tamam']
+        header: 'Warning!',
+        message: 'Please fill in all fields.',
+        buttons: ['OK']
       });
       await warningAlert.present();
-
     } else {
       const registerRequest: RegisterRequest = { email: this.email, password: this.password, firstName: this.firstName, lastName: this.lastName, phoneNumber: this.phoneNumber, username: this.userName };
       this.authService.Register(registerRequest).subscribe(
-        async data => {
+        async () => {
+          this.logger.info('User registered successfully', { email: this.email });
           this.router.navigate(['/login']);
         },
         async error => {
-          if (error.status === 400) { // 409 Conflict status code
+          if (error.status === 400) {
+            this.logger.warn('Register failed: user already exists', { email: this.email });
             const alert = await this.alertController.create({
-              header: 'Uyarı!',
-              message: 'Kullanıcı zaten kayıtlı, lütfen giriş yapınız.',
-              buttons: ['Tamam']
+              header: 'Warning!',
+              message: 'User already registered, please login.',
+              buttons: ['OK']
             });
             await alert.present();
           } else {
-            console.error('Login failed', error);
+            this.logger.error('Registration failed', error);
           }
         }
       );
     }
-
   }
-
 }

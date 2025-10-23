@@ -1,37 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="warning">
     <ion-buttons slot="start">
-      <!-- <ion-back-button defaultHref="home" text=""></ion-back-button> -->
     </ion-buttons>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/" text=""></ion-back-button>
-      <!-- <ion-button (click)="logout()">
-        <ion-icon name="log-out"></ion-icon>
-      </ion-button> -->
     </ion-buttons>
-    <ion-title>Ürün Detayı</ion-title>
-    <!-- <ion-buttons slot="end">
-      <ion-button routerLink="/product-add">
-        Ürün Ekle
-        <ion-icon name="add"></ion-icon>
-      </ion-button>
-    </ion-buttons> -->
+    <ion-title>Product Detail</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-slides pager="true" class="product-slider">
-    <ion-slide>
-      <img src="../../assets/product-slider/prod-slide1.png" />
-    </ion-slide>
-    <ion-slide>
-      <img src="../../assets/product-slider/prod-slide1.png" />
-    </ion-slide>
-    <ion-slide>
-      <img src="../../assets/product-slider/prod-slide1.png" />
-    </ion-slide>
-  </ion-slides> -->
-
   <div class="content-template-3">
     <div class="main-img">
       <div class="swiper product-main-imgs">
@@ -76,20 +54,20 @@
   </div>
 
   <div class="description">
-    <h5>Açıklama</h5>
+    <h5>Description</h5>
 
     <p>{{ product?.description }}</p>
   </div>
 
   <ion-button expand="block" color="warning" class="ion-margin-top ion-margin-bottom"
-    (click)="addToCart(product?.id)">Sepete Ekle</ion-button>
+    (click)="addToCart(product?.id)">Add to Basket</ion-button>
 
   <ion-col *ngIf="currentUserId === product?.sellerUserId || currentRole === 'Admin'" size="12" size-md="2"
     class="ion-margin-top control-btns">
     <ion-button *ngIf="currentUserId === product?.sellerUserId || currentRole === 'Admin'" size="medium" color="danger"
-      (click)="deleteProduct(product?.id)">Ürünü Sil</ion-button>
+      (click)="deleteProduct(product?.id)">Delete Product</ion-button>
     <ion-button *ngIf="currentUserId === product?.sellerUserId" size="medium" color="primary"
-      [routerLink]="['/product-update', product?.id]">Güncelle</ion-button>
+      [routerLink]="['/product-update', product?.id]">Update</ion-button>
   </ion-col>
 
 </ion-content>

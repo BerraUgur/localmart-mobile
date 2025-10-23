@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule)
   },
   {
     path: '',
@@ -13,43 +13,51 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'register',
-    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
+    loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterPageModule)
   },
   {
     path: 'products',
-    loadChildren: () => import('./pages/products/products.module').then( m => m.productsPageModule)
+    loadChildren: () => import('./pages/products/products.module').then(m => m.productsPageModule)
   },
   {
     path: 'product-detail/:id',
-    loadChildren: () => import('./pages/product-detail/product-detail.module').then( m => m.productDetailPageModule)
+    loadChildren: () => import('./pages/product-detail/product-detail.module').then(m => m.productDetailPageModule)
   },
   {
     path: 'product-add',
-    loadChildren: () => import('./pages/product-add/product-add.module').then( m => m.ProductAddPageModule)
+    loadChildren: () => import('./pages/product-add/product-add.module').then(m => m.ProductAddPageModule)
   },
   {
     path: 'product-update/:id',
-    loadChildren: () => import('./pages/product-update/product-update.module').then( m => m.ProductUpdatePageModule)
+    loadChildren: () => import('./pages/product-update/product-update.module').then(m => m.ProductUpdatePageModule)
   },
   {
     path: 'user-edit/:id',
-    loadChildren: () => import('./pages/user-edit/user-edit.module').then( m => m.UserEditPageModule)
+    loadChildren: () => import('./pages/user-edit/user-edit.module').then(m => m.UserEditPageModule)
   },
   {
     path: 'user-list',
-    loadChildren: () => import('./pages/user-list/user-list.module').then( m => m.UserListPageModule)
+    loadChildren: () => import('./pages/user-list/user-list.module').then(m => m.UserListPageModule)
   },
   {
     path: 'basket',
-    loadChildren: () => import('./pages/basket/basket.module').then( m => m.BasketPageModule)
+    loadChildren: () => import('./pages/basket/basket.module').then(m => m.BasketPageModule)
   },
   {
     path: 'my-orders',
-    loadChildren: () => import('./pages/my-orders/my-orders.module').then( m => m.MyOrdersPageModule)
+    loadChildren: () => import('./pages/my-orders/my-orders.module').then(m => m.MyOrdersPageModule)
+  },
+  {
+    path: 'forgot-password',
+    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule)
+  },
+  {
+    path: 'reset-password',
+    loadChildren: () => import('./pages/reset-password/reset-password.module').then(m => m.ResetPasswordPageModule)
   },
 ];
 
