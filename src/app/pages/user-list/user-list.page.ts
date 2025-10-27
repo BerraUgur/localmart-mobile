@@ -15,18 +15,18 @@ export class UserListPage implements OnInit {
   Role: any | Role;
   nousers: boolean = false;
   constructor(private authService: AuthService, private alertController: AlertController, private logger: LoggerService) {
-    this.logger.info('UserListPage initialized');
+    this.logger.logInfo('UserListPage initialized');
   }
 
   ngOnInit() {
-    this.logger.info('UserListPage ngOnInit');
+    this.logger.logInfo('UserListPage ngOnInit');
     this.authService.getUserList().subscribe(
       (data: User[]) => {
         this.users = data;
-        this.logger.info('Users fetched successfully', data);
+        this.logger.logInfo('Users fetched successfully', data);
       },
       async error => {
-        this.logger.error('Error fetching users', error);
+        this.logger.logError('Error fetching users', error);
         const warningAlert = await this.alertController.create({
           header: 'Warning!',
           message: 'An error occurred while fetching users.',
@@ -52,7 +52,7 @@ export class UserListPage implements OnInit {
             this.authService.deleteUser(userId).subscribe(
               () => {
                 let deletedUser = this.users?.find(user => user.id == userId);
-                this.logger.info('User deleted', deletedUser);
+                this.logger.logInfo('User deleted', deletedUser);
                 this.alertController.create({
                   header: 'Success!',
                   message: `${deletedUser?.firstName} ${deletedUser?.lastName} was deleted successfully.`,
@@ -61,7 +61,7 @@ export class UserListPage implements OnInit {
                 this.users = this.users?.filter(user => user.id !== userId);
               },
               error => {
-                this.logger.error('Error deleting user', error);
+                this.logger.logError('Error deleting user', error);
               }
             );
           }

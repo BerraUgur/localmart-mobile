@@ -19,7 +19,7 @@
                 width="150"></div>
           </div>
           <div *ngFor="let image of product?.images" [hidden]="!image" class="swiper-slide">
-            <div class="img"><img [src]="'http://localhost:5203/' + image" alt="{{ product?.name }}" width="100"></div>
+            <div class="img"><img [src]="'http://localhost:5203' + image" alt="{{ product?.name }}" width="100"></div>
           </div>
         </div>
       </div>
@@ -64,10 +64,34 @@
 
   <ion-col *ngIf="currentUserId === product?.sellerUserId || currentRole === 'Admin'" size="12" size-md="2"
     class="ion-margin-top control-btns">
-    <ion-button *ngIf="currentUserId === product?.sellerUserId || currentRole === 'Admin'" size="medium" color="danger"
+    <ion-button *ngIf="isOwner() || currentRole === 'Admin'" size="medium" color="danger"
       (click)="deleteProduct(product?.id)">Delete Product</ion-button>
-    <ion-button *ngIf="currentUserId === product?.sellerUserId" size="medium" color="primary"
+    <ion-button *ngIf="isOwner()" size="medium" color="primary"
       [routerLink]="['/product-update', product?.id]">Update</ion-button>
   </ion-col>
+
+  <div class="comments-section">
+    <div *ngIf="isLogging" class="comment-area">
+      <ion-item class="comment-input">
+        <ion-input [(ngModel)]="comment" placeholder="Write a comment"></ion-input>
+      </ion-item>
+      <ion-button expand="block" color="warning" class="comment-btn" (click)="addComment()">Add Comment</ion-button>
+    </div>
+    <div *ngIf="comments && comments.length > 0" class="comment-list">
+      <h5>Comments</h5>
+      <div class="comment-boxes">
+        <div class="comment-box" *ngFor="let c of comments">
+          <div class="comment-user">
+            <span class="comment-name">{{ c.user?.firstName }} {{ c.user?.lastName }}</span>
+            <button *ngIf="currentRole === 'Admin' || currentUserId === c.user?.id" class="delete-btn"
+              (click)="deleteComment(c.id!)">
+              <ion-icon name="trash" style="font-size: 1.3em; color: #d35400;"></ion-icon>
+            </button>
+          </div>
+          <div class="comment-content">{{ c.content }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </ion-content>

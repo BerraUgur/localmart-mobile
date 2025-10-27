@@ -32,50 +32,59 @@ export class MyOrdersPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadOrders();
+  }
+
+  private loadOrders() {
     this.currentUserId = this.authService.getCurrentUserId();
     this.currentUserRole = this.authService.getCurrentRoles();
-    this.logger.info('MyOrdersPage ngOnInit', { currentUserId: this.currentUserId, currentUserRole: this.currentUserRole });
-    this.ordersService.getOrdersByUserId(this.currentUserId).subscribe(data => {
-      data.forEach((item: any) => {
-        let order: any = {};
-        this.addressService.getAddressById(item.addressId).subscribe(address => {
-          item.address = address;
-          this.orders = data;
-          this.logger.info('User orders loaded', data);
+    this.logger.logInfo('MyOrdersPage loadOrders', { currentUserId: this.currentUserId, currentUserRole: this.currentUserRole });
+
+    // Buyer
+    this.ordersService.getOrdersByUserId(this.currentUserId).subscribe(ordersArray => {
+      this.orders = ordersArray;
+      this.orders.forEach((item: any) => {
+        this.addressService.getAddressById(item.addressId).subscribe((address: any) => {
+          item.address = address.data;
         });
-        item.orderItems.forEach((orderItem: any) => {
-          this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
-            orderItem.product.sellerPhone = user.phoneNumber;
-            this.logger.info('Seller loaded for order item', user);
+        if (Array.isArray(item.orderItems)) {
+          item.orderItems.forEach((orderItem: any) => {
+            this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
+              orderItem.product.sellerPhone = user.phoneNumber;
+            });
           });
-        });
+        }
       });
+      this.logger.logInfo('User orders loaded', ordersArray);
     });
-    this.ordersService.getAllOrders().subscribe(data => {
-      data.forEach((item: any) => {
-        this.addressService.getAddressById(item.addressId).subscribe(address => {
-          item.address = address;
+
+    // Seller
+    this.ordersService.getAllOrders().subscribe(allOrdersArray => {
+      this.incomingOrders = [];
+      allOrdersArray.forEach((item: any) => {
+        this.addressService.getAddressById(item.addressId).subscribe((address: any) => {
+          item.address = address.data;
         });
-        item.orderItems = item.orderItems.filter((p: any) => p.product.sellerUserId == this.currentUserId);
-        item.orderItems.forEach((orderItem: any) => {
-          this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
-            orderItem.product.sellerPhone = user.phoneNumber;
-            this.logger.info('Seller loaded for incoming order item', user);
+        if (Array.isArray(item.orderItems)) {
+          item.orderItems = item.orderItems.filter((p: any) => p.product.sellerUserId == this.currentUserId);
+          item.orderItems.forEach((orderItem: any) => {
+            this.authService.getUser(orderItem.product.sellerUserId).subscribe(user => {
+              orderItem.product.sellerPhone = user.phoneNumber;
+            });
           });
-        });
-        if (item.orderItems.length > 0) {
+        }
+        if (item.orderItems && item.orderItems.length > 0) {
           this.incomingOrders.push(item);
         }
       });
-      this.allOrders = data;
-      this.logger.info('All orders loaded', data);
+      this.logger.logInfo('All orders loaded', allOrdersArray);
     });
   }
 
-  orderShipped(order: Order | any, pid: number | undefined) {
-    this.ordersService.updateOrderToShippedProductById(order.id, order, pid).subscribe(data => {
-      order.status = 2;
-      this.logger.info('Order shipped', { orderId: order.id });
+  orderShipped(order: Order | any, pid?: number) {
+    const obs = pid ? this.ordersService.updateOrderToShippedProductById(order.id, order, pid) : this.ordersService.updateOrderToShippedById(order.id, order);
+    obs.subscribe(data => {
+      this.logger.logInfo('Order shipped', { orderId: order.id, pid });
       // Send mail to buyer with detailed HTML
       this.authService.getUser(order.userId).subscribe(user => {
         const productsHtml = `
@@ -128,22 +137,26 @@ export class MyOrdersPage implements OnInit {
           body: productsHtml
         };
         this.mailService.sendMail(mail).subscribe(
-          () => this.logger.info('Mail sent to buyer for shipped order', { orderId: order.id }),
-          error => this.logger.error('Error sending mail to buyer for shipped order', error)
+          () => this.logger.logInfo('Mail sent to buyer for shipped order', { orderId: order.id }),
+          error => this.logger.logError('Error sending mail to buyer for shipped order', error)
         );
       });
       this.alertController.create({
         header: 'Success!',
         message: 'Product has been shipped.',
         buttons: ['OK']
-      }).then(successAlert => successAlert.present());
+      }).then(successAlert => {
+        successAlert.present();
+        // refresh lists so UI shows updated status
+        this.loadOrders();
+      });
     });
   }
 
-  orderDelivered(order: Order | any, pid: number | undefined) {
-    this.ordersService.updateOrderToDeliveredProductById(order.id, order, pid).subscribe(data => {
-      order.status = 3;
-      this.logger.info('Order delivered', { orderId: order.id });
+  orderDelivered(order: Order | any, pid?: number) {
+    const obs = pid ? this.ordersService.updateOrderToDeliveredProductById(order.id, order, pid) : this.ordersService.updateOrderToDeliveredById(order.id, order);
+    obs.subscribe(data => {
+      this.logger.logInfo('Order delivered', { orderId: order.id, pid });
       // Send mail to seller with detailed HTML
       if (order.orderItems && order.orderItems.length > 0) {
         const sellerId = order.orderItems[0].product.sellerUserId;
@@ -200,8 +213,8 @@ export class MyOrdersPage implements OnInit {
             body: productsHtml
           };
           this.mailService.sendMail(mail).subscribe(
-            () => this.logger.info('Mail sent to seller for delivered order', { orderId: order.id }),
-            error => this.logger.error('Error sending mail to seller for delivered order', error)
+            () => this.logger.logInfo('Mail sent to seller for delivered order', { orderId: order.id }),
+            error => this.logger.logError('Error sending mail to seller for delivered order', error)
           );
         });
       }
@@ -209,7 +222,10 @@ export class MyOrdersPage implements OnInit {
         header: 'Success!',
         message: 'Product has been delivered.',
         buttons: ['OK']
-      }).then(successAlert => successAlert.present());
+      }).then(successAlert => {
+        successAlert.present();
+        this.loadOrders();
+      });
     });
   }
 }

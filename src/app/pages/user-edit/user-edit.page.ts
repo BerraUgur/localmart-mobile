@@ -29,25 +29,25 @@ export class UserEditPage implements OnInit {
 
   ngOnInit() {
     this.userId = this.route.snapshot.paramMap.get('id');
-    this.logger.info('UserEditPage ngOnInit', { userId: this.userId });
+    this.logger.logInfo('UserEditPage ngOnInit', { userId: this.userId });
     this.authService.getUser(this.userId).subscribe(
       (user: User) => {
         this.user = user;
         this.userForm.patchValue(user);
-        this.logger.info('User loaded for edit', user);
+        this.logger.logInfo('User loaded for edit', user);
       },
       error => {
-        this.logger.error('Error fetching user details', error);
+        this.logger.logError('Error fetching user details', error);
       }
     );
   }
 
   updateUser() {
     if (this.userForm.valid) {
-      this.logger.info('User update attempt', this.userForm.value);
+      this.logger.logInfo('User update attempt', this.userForm.value);
       this.authService.updateUser(this.userId!, this.userForm.value).subscribe(
         response => {
-          this.logger.info('User updated successfully', response);
+          this.logger.logInfo('User updated successfully', response);
           this.router.navigate(['/user-list']).then(async () => {
             const successAlert = await this.alertController.create({
               header: 'Success!',
@@ -60,7 +60,7 @@ export class UserEditPage implements OnInit {
           });
         },
         error => {
-          this.logger.error('Error updating user', error);
+          this.logger.logError('Error updating user', error);
         }
       );
     }

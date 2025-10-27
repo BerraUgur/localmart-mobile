@@ -26,12 +26,12 @@ export class RegisterPage implements OnInit {
   }
 
   async register() {
-    this.logger.info('Register attempt', {
+    this.logger.logInfo('Register attempt', {
       userName: this.userName,
       email: this.email
     });
     if (this.userName === '' || this.email === '' || this.password === '' || this.firstName === '' || this.lastName === '' || this.phoneNumber === '') {
-      this.logger.warn('Register failed: missing fields');
+      this.logger.logWarn('Register failed: missing fields');
       const warningAlert = await this.alertController.create({
         header: 'Warning!',
         message: 'Please fill in all fields.',
@@ -39,15 +39,15 @@ export class RegisterPage implements OnInit {
       });
       await warningAlert.present();
     } else {
-      const registerRequest: RegisterRequest = { email: this.email, password: this.password, firstName: this.firstName, lastName: this.lastName, phoneNumber: this.phoneNumber, username: this.userName };
+      const registerRequest: RegisterRequest = { email: this.email, password: this.password, firstName: this.firstName, lastName: this.lastName, phoneNumber: this.phoneNumber.toString(), username: this.userName };
       this.authService.Register(registerRequest).subscribe(
         async () => {
-          this.logger.info('User registered successfully', { email: this.email });
+          this.logger.logInfo('User registered successfully', { email: this.email });
           this.router.navigate(['/login']);
         },
         async error => {
           if (error.status === 400) {
-            this.logger.warn('Register failed: user already exists', { email: this.email });
+            this.logger.logWarn('Register failed: user already exists', { email: this.email });
             const alert = await this.alertController.create({
               header: 'Warning!',
               message: 'User already registered, please login.',
@@ -55,7 +55,7 @@ export class RegisterPage implements OnInit {
             });
             await alert.present();
           } else {
-            this.logger.error('Registration failed', error);
+            this.logger.logError('Registration failed', error);
           }
         }
       );

@@ -17,7 +17,7 @@ export class ProductUpdatePage implements OnInit {
   productId?: number;
 
   mainImage: any = '';
-  imagesArr: string[] | any = [];
+  imagesArr: string[] = [];
 
   currentUserId?: number;
 
@@ -50,16 +50,22 @@ export class ProductUpdatePage implements OnInit {
   ngOnInit() {
     this.productId = +this.route.snapshot.paramMap.get('id')!;
     this.productService.getProductById(this.productId).subscribe(
-      (product: Product | null) => {
-        if (product) {
-          this.logger.info('Product loaded', product);
-          this.mainImage = product.mainImage;
-          this.imagesArr = product.images;
+      (response: any) => {
+        if (response && response.data) {
+          const product = response.data;
+          this.logger.logInfo('Product loaded', product);
+          this.mainImage = product.mainImage || '';
+          this.imagesArr = Array.isArray(product.images) ? product.images : [];
           this.productForm.patchValue(product);
+        } else {
+          this.mainImage = '';
+          this.imagesArr = [];
         }
       },
       error => {
-        this.logger.error('Error fetching product details', error);
+        this.logger.logError('Error fetching product details', error);
+        this.mainImage = '';
+        this.imagesArr = [];
       }
     );
     this.currentUserId = this.authService.getCurrentUserId();
@@ -73,27 +79,26 @@ export class ProductUpdatePage implements OnInit {
         this.isNewMainImg = true;
         this.productForm.patchValue({ mainImage: base64 });
         this.mainImage = base64;
-        this.logger.info('Main image selected', { fileName: file.name });
+        this.logger.logInfo('Main image selected', { fileName: file.name });
       });
     }
   }
 
   onImagesSelected(event: any) {
     const files = event.target.files;
-    const newImages: any = [];
+    const newImages: string[] = [];
     this.imagesArr = [];
-    this.isNewOtherImg = true
+    this.isNewOtherImg = true;
+    let promises: Promise<string>[] = [];
     for (let i = 0; i < files.length; i++) {
-      this.convertToBase64(files[i]).then(base64 => {
-        newImages.push(base64);
-        this.imagesArr.push(base64);
-        this.logger.info('Other image selected', { fileName: files[i].name });
-      });
+      promises.push(this.convertToBase64(files[i]));
     }
-    setTimeout(() => {
-      this.productForm.patchValue({ images: newImages });
-      this.logger.debug('Images array updated', newImages);
-    }, 100);
+    Promise.all(promises).then(base64Images => {
+      const filteredImages = base64Images.filter(img => !!img && typeof img === 'string' && img.trim() !== '');
+      this.imagesArr = filteredImages;
+      this.productForm.patchValue({ images: filteredImages });
+      this.logger.logDebug('Images array updated', filteredImages);
+    });
   }
 
   convertToBase64(file: File): Promise<string> {
@@ -127,10 +132,35 @@ export class ProductUpdatePage implements OnInit {
       return;
     }
     if (this.productForm.valid) {
-      this.productForm.value.id = this.productId;
-      this.productService.updateProduct(this.productId!, this.productForm.value).subscribe(
+      const formValue = { ...this.productForm.value };
+      formValue.id = this.productId;
+
+      if (Array.isArray(formValue.images)) {
+        formValue.images = formValue.images.filter((img: string) => !!img && typeof img === 'string' && img.trim() !== '' && img.startsWith('data:image'));
+      }
+
+      delete formValue.comments;
+      delete formValue.owner;
+      delete formValue.category;
+      delete formValue.createdAt;
+      delete formValue.updatedAt;
+
+      const updatePayload: any = {
+        id: formValue.id,
+        name: formValue.name,
+        price: formValue.price,
+        discountedPrice: formValue.discountedPrice,
+        stock: formValue.stock,
+        description: formValue.description,
+        city: formValue.city,
+        district: formValue.district,
+        mainImage: formValue.mainImage,
+        images: formValue.images,
+        sellerUserId: formValue.sellerUserId
+      };
+      this.productService.updateProduct(this.productId!, updatePayload).subscribe(
         async response => {
-          this.logger.info('Product updated successfully', response);
+          this.logger.logInfo('Product updated successfully', response);
           const succesAlert = await this.alertController.create({
             header: 'Success!',
             message: 'Product updated successfully.',
@@ -144,7 +174,7 @@ export class ProductUpdatePage implements OnInit {
           });
         },
         error => {
-          this.logger.error('Error updating product', error);
+          this.logger.logError('Error updating product', error);
         }
       );
     }

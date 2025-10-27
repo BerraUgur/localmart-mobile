@@ -16,6 +16,9 @@ import Swiper from 'swiper';
 
 })
 export class productDetailPage implements OnInit, AfterViewInit {
+  isOwner(): boolean {
+    return Number(this.currentUserId) === Number(this.product?.sellerUserId);
+  }
   product: Product | null = null;
   comments?: CustomComment[] = [];
   comment?: string;
@@ -41,27 +44,29 @@ export class productDetailPage implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.isLogging = this.authService.loggedIn()
-    this.currentRole = this.authService.getCurrentRoles()
+    this.isLogging = this.authService.loggedIn();
+    this.currentRole = this.authService.getCurrentRoles();
 
     const productId = +this.route.snapshot.paramMap.get('id')!;
     this.productService.getProductById(productId).subscribe(
-      (product: Product | null) => {
-        if (product) {
-          this.product = product;
-          this.comments = product.comments;
-          this.logger.info('Product loaded', product);
-          this.authService.getUser(product.sellerUserId).subscribe((user) => {
-            this.seller = user;
-            this.logger.info('Seller loaded', user);
-          });
+      (product: any) => {
+        if (product && product.data) {
+          this.product = product.data;
+          this.comments = product.data.comments;
+          this.logger.logInfo('Product loaded', product.data);
+          if (product.data.sellerUserId !== undefined && product.data.sellerUserId !== null) {
+            this.authService.getUser(product.data.sellerUserId).subscribe((user) => {
+              this.seller = user;
+              this.logger.logInfo('Seller loaded', user);
+            });
+          }
           this.initializeSwipers();
         } else {
-          this.logger.error('Product not found', { productId });
+          this.logger.logError('Product not found', { productId });
         }
       },
       error => {
-        this.logger.error('Error fetching product details', error);
+        this.logger.logError('Error fetching product details', error);
       }
     );
 
@@ -78,22 +83,13 @@ export class productDetailPage implements OnInit, AfterViewInit {
         header: 'Warning!',
         message: 'You must be logged in to add to basket.',
         buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          },
-          {
-            text: 'Login',
-            handler: () => {
-              this.router.navigate(['/login']);
-            }
-          }
+          { text: 'Cancel', role: 'cancel' },
+          { text: 'Login', handler: () => { this.router.navigate(['/login']); } }
         ]
       });
       await alert.present();
       return;
     }
-
     if (this.currentRole == "Admin") {
       const warningAlert = await this.alertController.create({
         header: 'Warning!',
@@ -103,20 +99,7 @@ export class productDetailPage implements OnInit, AfterViewInit {
       await warningAlert.present();
       return;
     }
-
-    for (let i = 0; i < this.currentBasket.length; i++) {
-      if (this.currentBasket[i].productId === productId) {
-        const warningAlert = await this.alertController.create({
-          header: 'Warning!',
-          message: 'Product is already in your basket.',
-          buttons: ['OK']
-        });
-        await warningAlert.present();
-        return;
-      }
-    }
-
-    if (this.currentUserId == this.product?.sellerUserId) {
+    if (Number(this.currentUserId) === Number(this.product?.sellerUserId)) {
       this.alertController.create({
         header: 'Warning!',
         message: 'You cannot add your own product to basket.',
@@ -124,14 +107,17 @@ export class productDetailPage implements OnInit, AfterViewInit {
       }).then(successAlert => successAlert.present());
       return;
     }
-
-    this.currentBasket.push({
-      productId: productId,
-      quantity: 1
-    });
-
+    if (this.currentBasket.some((item: any) => item.productId === productId)) {
+      const warningAlert = await this.alertController.create({
+        header: 'Warning!',
+        message: 'Product is already in your basket.',
+        buttons: ['OK']
+      });
+      await warningAlert.present();
+      return;
+    }
+    this.currentBasket.push({ productId: productId, quantity: 1 });
     localStorage.setItem('basket', JSON.stringify(this.currentBasket));
-
     const successAlert = await this.alertController.create({
       header: 'Success!',
       message: 'Product added to basket.',
@@ -141,33 +127,58 @@ export class productDetailPage implements OnInit, AfterViewInit {
   }
 
   addComment() {
-    if (this.product) {
+    if (this.product && this.comment && this.comment.trim().length > 0) {
       const newComment: CustomComment = {
-        content: this.comment, productId: this.product.id, userId: this.authService.getCurrentUserId(),
+        content: this.comment,
+        productId: this.product.id,
+        userId: this.authService.getCurrentUserId(),
       };
       this.commentService.addComment(newComment).subscribe(
         (data: CustomComment) => {
-          location.reload();
-          this.comments?.push(data);
-          this.logger.info('Comment added successfully', data);
+          this.comment = '';
+          this.logger.logInfo('Comment added successfully', data);
+
+          if (this.product && this.product.id) {
+            this.productService.getProductById(this.product.id).subscribe((product: any) => {
+              if (product && product.data) {
+                this.comments = product.data.comments;
+              }
+            });
+          }
         },
         error => {
-          this.logger.error('Error adding comment', error);
+          this.logger.logError('Error adding comment', error);
         }
       );
     }
   }
 
   deleteComment(commentId: number) {
-    this.commentService.deleteComment(commentId).subscribe(
-      () => {
-        this.comments = this.comments?.filter(comment => comment.id !== commentId);
-        this.logger.info('Comment deleted', { commentId });
-      },
-      error => {
-        this.logger.error('Error deleting comment', error);
-      }
-    );
+    this.alertController.create({
+      header: 'Are you sure?',
+      message: 'Do you really want to delete this comment?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.commentService.deleteComment(commentId).subscribe(
+              () => {
+                this.comments = this.comments?.filter(comment => comment.id !== commentId);
+                this.logger.logInfo('Comment deleted', { commentId });
+              },
+              error => {
+                this.logger.logError('Error deleting comment', error);
+              }
+            );
+          }
+        }
+      ]
+    }).then(alert => alert.present());
   }
 
   async deleteProduct(productId: any) {
@@ -184,7 +195,7 @@ export class productDetailPage implements OnInit, AfterViewInit {
           handler: () => {
             this.productService.deleteProduct(productId).subscribe(
               () => {
-                this.logger.info('Product deleted', { productId });
+                this.logger.logInfo('Product deleted', { productId });
                 this.alertController.create({
                   header: 'Success!',
                   message: `Product deleted successfully.`,
@@ -199,7 +210,7 @@ export class productDetailPage implements OnInit, AfterViewInit {
                 });
               },
               error => {
-                this.logger.error('Error deleting product', error);
+                this.logger.logError('Error deleting product', error);
               }
             );
           }

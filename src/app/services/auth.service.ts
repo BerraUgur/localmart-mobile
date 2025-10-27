@@ -15,11 +15,11 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class AuthService {
   resetPassword(email: string, token: string, newPassword: string): Observable<any> {
-    this.logger.info('Resetting password', { email });
+    this.logger.logInfo('Resetting password', { email });
     return this.httpClient.post(this.NewPath + 'reset-password', { email, token, newPassword });
   }
   requestPasswordReset(email: string): Observable<any> {
-    this.logger.info('Requesting password reset', { email });
+    this.logger.logInfo('Requesting password reset', { email });
     return this.httpClient.post(this.NewPath + 'forgot-password', { email });
   }
   localStorage: Storage;
@@ -31,16 +31,16 @@ export class AuthService {
   constructor(private httpClient: HttpClient, private logger: LoggerService) {
     this.setUserStats();
     this.localStorage = window.localStorage;
-    this.logger.info('AuthService initialized');
+    this.logger.logInfo('AuthService initialized');
   }
 
   login(user: LoginRequest) {
-    this.logger.info('Login attempt', user);
+    this.logger.logInfo('Login attempt', user);
     return this.httpClient.post<LoginResponse>(this.NewPath + "login", user);
   }
 
   Register(user: RegisterRequest) {
-    this.logger.info('Register attempt', user);
+    this.logger.logInfo('Register attempt', user);
     return this.httpClient.post(this.NewPath + "register", user)
   }
 
@@ -79,12 +79,12 @@ export class AuthService {
   }
 
   getCurrentRoles(): string {
-    this.logger.debug('Current roles requested:', this.currentRoles);
+    this.logger.log('Debug', 'Current roles requested:', this.currentRoles);
     return this.currentRoles ?? "";
   }
 
   getCurrentUserId(): number {
-    this.logger.debug('Current userId requested:', this.currentUserId);
+    this.logger.log('Debug', 'Current userId requested:', this.currentUserId);
     return this.currentUserId!;
   }
 
@@ -96,7 +96,7 @@ export class AuthService {
   }
 
   logout() {
-    this.logger.info('User logged out');
+    this.logger.logInfo('User logged out');
     this.localStorage.removeItem("token");
   }
 
@@ -106,22 +106,22 @@ export class AuthService {
   }
 
   updateUser(userId: number, updateUserRequest: UpdateUserRequest): Observable<void> {
-    this.logger.info('Update user attempt', { userId, updateUserRequest });
+    this.logger.logInfo('Update user attempt', { userId, updateUserRequest });
     return this.httpClient.put<void>(this.NewPath + userId + "/update", updateUserRequest);
   }
 
   deleteUser(id: number): Observable<void> {
-    this.logger.info('Delete user attempt', { userId: id });
+    this.logger.logInfo('Delete user attempt', { userId: id });
     return this.httpClient.delete<void>(`${this.NewPath}${id}`);
   }
 
   getUserList(): Observable<User[]> {
-    this.logger.info('Fetching user list');
+    this.logger.logInfo('Fetching user list');
     return this.httpClient.get<User[]>(this.NewPath + "userlist");
   }
 
   getUser(userId: number): Observable<User> {
-    this.logger.info('Fetching user by id', { userId });
+    this.logger.logInfo('Fetching user by id', { userId });
     return this.httpClient.get<User>(this.NewPath + userId);
   }
 }

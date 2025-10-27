@@ -11,31 +11,31 @@ export class AddressService {
   private baseUrl: string = 'http://localhost:5203/address';
 
   constructor(private http: HttpClient, private logger: LoggerService) {
-    this.logger.info('AddressService initialized');
+    this.logger.logInfo('AddressService initialized');
   }
 
   getAddressByProductId(productId: number): Observable<Address[]> {
-    this.logger.info('Fetching address by product id', { productId });
+    this.logger.logInfo('Fetching address by product id', { productId });
     return this.http.get<Address[]>(`${this.baseUrl}/product/${productId}`);
   }
 
   getAddressById(id: number): Observable<Address | null> {
-    this.logger.info('Fetching address by id', { id });
+    this.logger.logInfo('Fetching address by id', { id });
     return this.http.get<Address>(`${this.baseUrl}/${id}`);
   }
 
-  addAddress(address: Address): Observable<Address> {
-    this.logger.info('Adding address', address);
-    return this.http.post<Address>(this.baseUrl, address);
+  addAddress(address: Address): Observable<{ data: Address }> {
+    this.logger.logInfo('Adding address', address);
+    return this.http.post<{ data: Address }>(this.baseUrl, address);
   }
 
   updateAddress(id: number, address: Address): Observable<Address> {
-    this.logger.info('Updating address', { id, address });
+    this.logger.logInfo('Updating address', { id, address });
     return this.http.put<Address>(`${this.baseUrl}/${id}`, address);
   }
 
   deleteAddress(id: number): Observable<void> {
-    this.logger.info('Deleting address', { id });
+    this.logger.logInfo('Deleting address', { id });
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

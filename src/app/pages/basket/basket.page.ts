@@ -10,6 +10,7 @@ import { OrdersService } from 'src/app/services/orders.service';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
 import { LoggerService } from 'src/app/services/logger.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-basket',
@@ -34,36 +35,38 @@ export class BasketPage implements OnInit {
     private ordersService: OrdersService,
     private authService: AuthService,
     private mailService: MailService,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     if (localStorage.getItem('basket')) {
       this.currentBasket = JSON.parse((<any>localStorage.getItem('basket')));
-      this.logger.info('Basket loaded from localStorage', this.currentBasket);
+      this.logger.logInfo('Basket loaded from localStorage', this.currentBasket);
     }
     if (this.currentBasket) {
-      this.currentBasket.forEach((product: any) => {
-        this.productService.getProductById(product.productId).subscribe((product: Product | null) => {
-          if (product) {
-            this.authService.getUser(product.sellerUserId).subscribe((user) => {
-              product.sellerPhone = user.phoneNumber;
-              this.products.push(product);
-              this.logger.info('Product loaded for basket', product);
+      this.currentBasket.forEach((basketItem: any) => {
+        this.productService.getProductById(basketItem.productId).subscribe((response: any) => {
+          const productData = response?.data;
+          if (productData) {
+            this.authService.getUser(productData.sellerUserId).subscribe((user) => {
+              productData.sellerPhone = user.phoneNumber;
+              this.products.push(productData);
+              this.logger.logInfo('Product loaded for basket', productData);
             });
           } else {
-            this.logger.error('Product not found', { productId: product && 'productId' in product ? (product as any).productId : undefined });
+            this.logger.logError('Product not found', { productId: basketItem && 'productId' in basketItem ? basketItem.productId : undefined });
           }
         },
           error => {
-            this.logger.error('Error fetching product details', error);
+            this.logger.logError('Error fetching product details', error);
           }
         );
       });
       this.currentUserId = this.authService.getCurrentUserId();
       this.authService.getUser(this.currentUserId).subscribe((user) => {
         this.currentUser = user;
-        this.logger.info('Current user loaded', user);
+        this.logger.logInfo('Current user loaded', user);
       });
     }
   }
@@ -119,12 +122,12 @@ export class BasketPage implements OnInit {
         postalCode: this.postalCode,
         openAddress: this.openAddress,
       };
-  this.logger.info('Address request', addressRequest);
+      this.logger.logInfo('Address request', addressRequest);
       this.addressService.addAddress(addressRequest).subscribe(
         data => {
           let order: Order = {
             userId: this.currentUserId,
-            addressId: data.id,
+            addressId: data.data.id,
             note: this.note,
             orderItems: this.currentBasket
           }
@@ -184,15 +187,25 @@ export class BasketPage implements OnInit {
               body: products
             }
             this.mailService.sendMail(mail).subscribe(
-              (response) => { this.logger.info('Mail sent successfully', response); },
-              (error) => { this.logger.error('Error sending mail', error); }
+              (response) => { this.logger.logInfo('Mail sent successfully', response); },
+              (error) => { this.logger.logError('Error sending mail', error); }
             );
 
-            // Send an e-mail to the owner of the products in the basket
-            this.products.forEach((product: any) => {
-              this.authService.getUser(product.sellerUserId).subscribe((user) => {
-                let newTotalPrice: number = 0;
-                let products = `
+            // Send an e-mail to the owners of the products in the basket
+            const sellerMap = new Map<number, any[]>();
+            this.currentBasket.forEach((basketItem: any) => {
+              const product = this.products.find((p: any) => p.id == basketItem.productId);
+              if (!product) return;
+              if (!sellerMap.has(product.sellerUserId)) {
+                sellerMap.set(product.sellerUserId, []);
+              }
+              sellerMap.get(product.sellerUserId)?.push(product);
+            });
+
+            sellerMap.forEach((sellerProducts, sellerUserId) => {
+              this.authService.getUser(sellerUserId).subscribe((user) => {
+                let newTotalPrice = sellerProducts.reduce((sum, item) => sum + Number(item.discountedPrice), 0);
+                let productsTable = `
                   <table style="width: 100%; border: 1px solid #000; border-collapse: collapse;">
                     <thead>
                       <tr>
@@ -201,19 +214,12 @@ export class BasketPage implements OnInit {
                       </tr>
                     </thead>
                     <tbody>
-                      ${this.currentBasket.map((basketItem: any) => {
-                  const product = this.products.find((product: any) => product.id == basketItem.productId);
-                  if (product.sellerUserId != user.id) {
-                    return '';
-                  }
-                  newTotalPrice += Number(product.discountedPrice);
-                  return `
-                          <tr>
-                            <td style="padding: 8px;">${product?.name}</td>
-                            <td style="padding: 8px;">${product?.discountedPrice} TL</td>
-                          </tr>
-                        `;
-                }).join('')}
+                      ${sellerProducts.map((item: any) => `
+                        <tr>
+                          <td style="padding: 8px;">${item.name}</td>
+                          <td style="padding: 8px;">${item.discountedPrice} TL</td>
+                        </tr>
+                      `).join('')}
                       <tr>
                         <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold;">Total Price: ${newTotalPrice.toFixed(2)} TL</td>
                       </tr>
@@ -243,25 +249,31 @@ export class BasketPage implements OnInit {
                   Your order has been received successfully. Please ship as soon as possible.<br/><br/>
                   Localmart Team
                 `;
-
                 let mail_seller: Mail = {
                   to: user.email,
                   subject: 'Localmart | Your Order Has Been Approved.',
-                  body: products
+                  body: productsTable
                 }
                 this.mailService.sendMail(mail_seller).subscribe();
-              })
-            })
+              });
+            });
 
+            localStorage.removeItem('basket');
+            this.products = [];
+            this.currentBasket = [];
             this.alertController.create({
               header: 'Success!',
               message: 'Your order has been approved.',
               buttons: ['OK']
-            }).then(successAlert => successAlert.present());
+            }).then(successAlert => {
+              successAlert.present().then(() => {
+                this.router.navigate(['/my-products']);
+              });
+            });
           })
         },
         error => {
-          console.error('Address save failed', error);
+          this.logger.logError('Address save failed', error);
         }
       );
     }

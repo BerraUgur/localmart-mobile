@@ -18,7 +18,7 @@ export class HomePage implements OnInit {
   currentUser: any;
 
   constructor(private authService: AuthService, private router: Router, private logger: LoggerService) {
-    this.logger.info('HomePage loaded');
+    this.logger.logInfo('HomePage loaded');
   }
 
   ngOnInit(): void {
@@ -51,14 +51,14 @@ export class HomePage implements OnInit {
         },
         error: err => {
           // Error handling for user fetch
-          this.logger.error('Failed to fetch user', err);
+          this.logger.logError('Failed to fetch user', err);
         }
       });
     }
   }
 
   logOut(): void {
-  this.logger.info('User logged out from HomePage');
+  this.logger.logInfo('User logged out from HomePage');
   this.authService.logout();
     this.router.navigate(['/']).then(() => window.location.reload());
   }

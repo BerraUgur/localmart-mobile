@@ -40,7 +40,7 @@ export class ResetPasswordPage {
       return;
     }
     this.isSubmitting = true;
-    this.logger.info('Password reset attempt', { email: this.email });
+    this.logger.logInfo('Password reset attempt', { email: this.email });
     this.authService.resetPassword(this.email, this.token, this.newPassword).subscribe({
       next: async () => {
         const alert = await this.alertController.create({
@@ -53,7 +53,7 @@ export class ResetPasswordPage {
         this.router.navigate(['/login']);
       },
       error: async (err) => {
-        this.logger.error('Password reset failed', err);
+        this.logger.logError('Password reset failed', err);
         const alert = await this.alertController.create({
           header: 'Error!',
           message: 'Password reset failed. Please try again or request a new link.',

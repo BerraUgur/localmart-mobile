@@ -22,23 +22,23 @@ export class LoginPage implements OnInit {
     private alertController: AlertController,
     private logger: LoggerService
   ) {
-    this.logger.info('LoginPage loaded');
+    this.logger.logInfo('LoginPage loaded');
   }
 
   ngOnInit(): void { }
 
   async login(): Promise<void> {
     const loginRequest: LoginRequest = { email: this.email, password: this.password };
-    this.logger.info('Login attempt', loginRequest);
+    this.logger.logInfo('Login attempt', loginRequest);
     this.authService.login(loginRequest).subscribe({
       next: data => {
         localStorage.setItem('token', data.accessToken ?? "");
         this.authService.setUserStats();
-        this.logger.info('Login successful', { email: this.email });
+        this.logger.logInfo('Login successful', { email: this.email });
         this.router.navigate(['/']).then(() => window.location.reload());
       },
       error: async (err) => {
-        this.logger.error('Login failed', err);
+        this.logger.logError('Login failed', err);
         const warningAlert = await this.alertController.create({
           header: 'Warning!',
           message: 'Invalid username or password.',
