@@ -3,13 +3,6 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class LoggerService {
-  logDebug(message: string, details?: any) {
-    this.log('Debug', message, details);
-  }
-
-  logWarn(message: string, details?: any) {
-    this.log('Warn', message, details);
-  }
   private apiUrl = 'http://localhost:5203/logs';
 
   constructor(private http: HttpClient) { }
@@ -40,5 +33,13 @@ export class LoggerService {
 
   logInfo(message: string, details?: any) {
     this.log('Info', message, details);
+  }
+
+  logDebug(message: string, details?: any) {
+    this.log('Debug', message, details);
+  }
+
+  logWarn(message: string, details?: any) {
+    this.log('Warn', message, details);
   }
 }

@@ -40,7 +40,6 @@ export class ResetPasswordPage {
       return;
     }
     this.isSubmitting = true;
-    this.logger.logInfo('Password reset attempt', { email: this.email });
     this.authService.resetPassword(this.email, this.token, this.newPassword).subscribe({
       next: async () => {
         const alert = await this.alertController.create({

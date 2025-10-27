@@ -24,19 +24,16 @@ export class productsPage implements OnInit {
   cities: any = []
 
   constructor(private authService: AuthService, private productService: ProductService, private logger: LoggerService) {
-    this.logger.logInfo('ProductsPage initialized');
   }
 
   ngOnInit() {
     this.currentRole = this.authService.getCurrentRoles();
     this.currentUserId = this.authService.getCurrentUserId();
-    this.logger.logInfo('ProductsPage ngOnInit', { currentRole: this.currentRole, currentUserId: this.currentUserId });
     this.productService.getAllProducts().subscribe({
       next: (response: any) => {
         const products = Array.isArray(response?.data) ? response.data : [];
         this.products = products;
         this.filteredProducts = this.products;
-        this.logger.logInfo('Products fetched successfully', products);
         // Build seller/non-seller lists in a consistent way so counts are correct
         this.sellerProducts = this.products.filter(product => product.sellerUserId == this.currentUserId);
         this.notSellerProducts = this.products.filter(product => product.sellerUserId != this.currentUserId);

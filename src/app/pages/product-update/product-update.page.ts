@@ -53,7 +53,6 @@ export class ProductUpdatePage implements OnInit {
       (response: any) => {
         if (response && response.data) {
           const product = response.data;
-          this.logger.logInfo('Product loaded', product);
           this.mainImage = product.mainImage || '';
           this.imagesArr = Array.isArray(product.images) ? product.images : [];
           this.productForm.patchValue(product);
@@ -79,7 +78,6 @@ export class ProductUpdatePage implements OnInit {
         this.isNewMainImg = true;
         this.productForm.patchValue({ mainImage: base64 });
         this.mainImage = base64;
-        this.logger.logInfo('Main image selected', { fileName: file.name });
       });
     }
   }
@@ -97,7 +95,6 @@ export class ProductUpdatePage implements OnInit {
       const filteredImages = base64Images.filter(img => !!img && typeof img === 'string' && img.trim() !== '');
       this.imagesArr = filteredImages;
       this.productForm.patchValue({ images: filteredImages });
-      this.logger.logDebug('Images array updated', filteredImages);
     });
   }
 
@@ -160,7 +157,6 @@ export class ProductUpdatePage implements OnInit {
       };
       this.productService.updateProduct(this.productId!, updatePayload).subscribe(
         async response => {
-          this.logger.logInfo('Product updated successfully', response);
           const succesAlert = await this.alertController.create({
             header: 'Success!',
             message: 'Product updated successfully.',

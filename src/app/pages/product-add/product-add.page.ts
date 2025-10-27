@@ -25,7 +25,6 @@ export class ProductAddPage implements OnInit {
   multipleImagesBase64: string[] = [];
 
   constructor(private productService: ProductService, private router: Router, private alertController: AlertController, private logger: LoggerService) {
-    this.logger.logInfo('ProductAddPage loaded');
   }
 
   ngOnInit() { }
@@ -88,10 +87,8 @@ export class ProductAddPage implements OnInit {
       district: this.district
     }
 
-    this.logger.logInfo('Product add attempt', productRequest);
     this.productService.createProduct(productRequest).subscribe(
       async data => {
-        this.logger.logInfo('Product saved successfully', data);
         const succesAlert = await this.alertController.create({
           header: 'Success!',
           message: 'Product saved successfully.',

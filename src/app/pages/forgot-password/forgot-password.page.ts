@@ -25,7 +25,6 @@ export class ForgotPasswordPage {
 
   async sendResetRequest() {
     this.isSubmitting = true;
-    this.logger.logInfo('Password reset requested', { email: this.email });
     const mail = {
       to: this.email,
       subject: 'Password Reset Request',

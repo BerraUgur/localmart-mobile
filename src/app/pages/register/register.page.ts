@@ -26,12 +26,7 @@ export class RegisterPage implements OnInit {
   }
 
   async register() {
-    this.logger.logInfo('Register attempt', {
-      userName: this.userName,
-      email: this.email
-    });
     if (this.userName === '' || this.email === '' || this.password === '' || this.firstName === '' || this.lastName === '' || this.phoneNumber === '') {
-      this.logger.logWarn('Register failed: missing fields');
       const warningAlert = await this.alertController.create({
         header: 'Warning!',
         message: 'Please fill in all fields.',
@@ -42,12 +37,10 @@ export class RegisterPage implements OnInit {
       const registerRequest: RegisterRequest = { email: this.email, password: this.password, firstName: this.firstName, lastName: this.lastName, phoneNumber: this.phoneNumber.toString(), username: this.userName };
       this.authService.Register(registerRequest).subscribe(
         async () => {
-          this.logger.logInfo('User registered successfully', { email: this.email });
           this.router.navigate(['/login']);
         },
         async error => {
           if (error.status === 400) {
-            this.logger.logWarn('Register failed: user already exists', { email: this.email });
             const alert = await this.alertController.create({
               header: 'Warning!',
               message: 'User already registered, please login.',

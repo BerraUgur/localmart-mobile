@@ -11,7 +11,6 @@ export class AppComponent {
   constructor(private router: Router, private logger: LoggerService) { }
 
   ngOnInit() {
-  this.logger.logInfo('Application started. AppComponent ngOnInit executed.');
     const auth = localStorage.getItem('auth');
     if (auth === 'true' && ['/', '/home', '/login', '/register'].indexOf(window.location.pathname) !== -1) {
     } else if ((!auth || auth !== 'true') && window.location.pathname === '/products') {

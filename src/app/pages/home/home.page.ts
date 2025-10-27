@@ -18,7 +18,6 @@ export class HomePage implements OnInit {
   currentUser: any;
 
   constructor(private authService: AuthService, private router: Router, private logger: LoggerService) {
-    this.logger.logInfo('HomePage loaded');
   }
 
   ngOnInit(): void {
@@ -58,8 +57,7 @@ export class HomePage implements OnInit {
   }
 
   logOut(): void {
-  this.logger.logInfo('User logged out from HomePage');
-  this.authService.logout();
+    this.authService.logout();
     this.router.navigate(['/']).then(() => window.location.reload());
   }
 }

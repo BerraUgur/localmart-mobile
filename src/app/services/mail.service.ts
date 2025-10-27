@@ -12,11 +12,9 @@ export class MailService {
   private baseUrl: string = 'http://localhost:5203/auth/send-mail';
 
   constructor(private http: HttpClient, private logger: LoggerService) {
-    this.logger.logInfo('MailService initialized');
   }
 
   sendMail(mail: Mail): Observable<Mail> {
-    this.logger.logInfo('Sending mail', mail);
     return this.http.post<Mail>(this.baseUrl, mail);
   }
 }

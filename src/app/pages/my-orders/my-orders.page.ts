@@ -38,7 +38,6 @@ export class MyOrdersPage implements OnInit {
   private loadOrders() {
     this.currentUserId = this.authService.getCurrentUserId();
     this.currentUserRole = this.authService.getCurrentRoles();
-    this.logger.logInfo('MyOrdersPage loadOrders', { currentUserId: this.currentUserId, currentUserRole: this.currentUserRole });
 
     // Buyer
     this.ordersService.getOrdersByUserId(this.currentUserId).subscribe(ordersArray => {
@@ -55,7 +54,6 @@ export class MyOrdersPage implements OnInit {
           });
         }
       });
-      this.logger.logInfo('User orders loaded', ordersArray);
     });
 
     // Seller
@@ -77,14 +75,12 @@ export class MyOrdersPage implements OnInit {
           this.incomingOrders.push(item);
         }
       });
-      this.logger.logInfo('All orders loaded', allOrdersArray);
     });
   }
 
   orderShipped(order: Order | any, pid?: number) {
     const obs = pid ? this.ordersService.updateOrderToShippedProductById(order.id, order, pid) : this.ordersService.updateOrderToShippedById(order.id, order);
     obs.subscribe(data => {
-      this.logger.logInfo('Order shipped', { orderId: order.id, pid });
       // Send mail to buyer with detailed HTML
       this.authService.getUser(order.userId).subscribe(user => {
         const productsHtml = `
@@ -156,7 +152,6 @@ export class MyOrdersPage implements OnInit {
   orderDelivered(order: Order | any, pid?: number) {
     const obs = pid ? this.ordersService.updateOrderToDeliveredProductById(order.id, order, pid) : this.ordersService.updateOrderToDeliveredById(order.id, order);
     obs.subscribe(data => {
-      this.logger.logInfo('Order delivered', { orderId: order.id, pid });
       // Send mail to seller with detailed HTML
       if (order.orderItems && order.orderItems.length > 0) {
         const sellerId = order.orderItems[0].product.sellerUserId;

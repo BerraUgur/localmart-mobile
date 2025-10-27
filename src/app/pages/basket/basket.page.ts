@@ -42,7 +42,6 @@ export class BasketPage implements OnInit {
   ngOnInit() {
     if (localStorage.getItem('basket')) {
       this.currentBasket = JSON.parse((<any>localStorage.getItem('basket')));
-      this.logger.logInfo('Basket loaded from localStorage', this.currentBasket);
     }
     if (this.currentBasket) {
       this.currentBasket.forEach((basketItem: any) => {
@@ -52,7 +51,6 @@ export class BasketPage implements OnInit {
             this.authService.getUser(productData.sellerUserId).subscribe((user) => {
               productData.sellerPhone = user.phoneNumber;
               this.products.push(productData);
-              this.logger.logInfo('Product loaded for basket', productData);
             });
           } else {
             this.logger.logError('Product not found', { productId: basketItem && 'productId' in basketItem ? basketItem.productId : undefined });
@@ -66,7 +64,6 @@ export class BasketPage implements OnInit {
       this.currentUserId = this.authService.getCurrentUserId();
       this.authService.getUser(this.currentUserId).subscribe((user) => {
         this.currentUser = user;
-        this.logger.logInfo('Current user loaded', user);
       });
     }
   }
@@ -122,7 +119,6 @@ export class BasketPage implements OnInit {
         postalCode: this.postalCode,
         openAddress: this.openAddress,
       };
-      this.logger.logInfo('Address request', addressRequest);
       this.addressService.addAddress(addressRequest).subscribe(
         data => {
           let order: Order = {

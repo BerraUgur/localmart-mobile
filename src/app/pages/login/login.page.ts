@@ -21,20 +21,16 @@ export class LoginPage implements OnInit {
     public authService: AuthService,
     private alertController: AlertController,
     private logger: LoggerService
-  ) {
-    this.logger.logInfo('LoginPage loaded');
-  }
+  ) { }
 
   ngOnInit(): void { }
 
   async login(): Promise<void> {
     const loginRequest: LoginRequest = { email: this.email, password: this.password };
-    this.logger.logInfo('Login attempt', loginRequest);
     this.authService.login(loginRequest).subscribe({
       next: data => {
         localStorage.setItem('token', data.accessToken ?? "");
         this.authService.setUserStats();
-        this.logger.logInfo('Login successful', { email: this.email });
         this.router.navigate(['/']).then(() => window.location.reload());
       },
       error: async (err) => {

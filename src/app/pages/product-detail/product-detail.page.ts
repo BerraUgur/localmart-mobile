@@ -53,11 +53,9 @@ export class productDetailPage implements OnInit, AfterViewInit {
         if (product && product.data) {
           this.product = product.data;
           this.comments = product.data.comments;
-          this.logger.logInfo('Product loaded', product.data);
           if (product.data.sellerUserId !== undefined && product.data.sellerUserId !== null) {
             this.authService.getUser(product.data.sellerUserId).subscribe((user) => {
               this.seller = user;
-              this.logger.logInfo('Seller loaded', user);
             });
           }
           this.initializeSwipers();
@@ -136,7 +134,6 @@ export class productDetailPage implements OnInit, AfterViewInit {
       this.commentService.addComment(newComment).subscribe(
         (data: CustomComment) => {
           this.comment = '';
-          this.logger.logInfo('Comment added successfully', data);
 
           if (this.product && this.product.id) {
             this.productService.getProductById(this.product.id).subscribe((product: any) => {
@@ -169,7 +166,6 @@ export class productDetailPage implements OnInit, AfterViewInit {
             this.commentService.deleteComment(commentId).subscribe(
               () => {
                 this.comments = this.comments?.filter(comment => comment.id !== commentId);
-                this.logger.logInfo('Comment deleted', { commentId });
               },
               error => {
                 this.logger.logError('Error deleting comment', error);
@@ -195,7 +191,6 @@ export class productDetailPage implements OnInit, AfterViewInit {
           handler: () => {
             this.productService.deleteProduct(productId).subscribe(
               () => {
-                this.logger.logInfo('Product deleted', { productId });
                 this.alertController.create({
                   header: 'Success!',
                   message: `Product deleted successfully.`,
