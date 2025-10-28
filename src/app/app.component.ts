@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoggerService } from './services/logger.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +7,7 @@ import { LoggerService } from './services/logger.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor(private router: Router, private logger: LoggerService) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     const auth = localStorage.getItem('auth');

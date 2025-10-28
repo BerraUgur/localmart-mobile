@@ -14,12 +14,6 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-  resetPassword(email: string, token: string, newPassword: string): Observable<any> {
-    return this.httpClient.post(this.NewPath + 'reset-password', { email, token, newPassword });
-  }
-  requestPasswordReset(email: string): Observable<any> {
-    return this.httpClient.post(this.NewPath + 'forgot-password', { email });
-  }
   localStorage: Storage;
   jwtHelperService: JwtHelperService = new JwtHelperService();
   currentUserId?: number;
@@ -113,5 +107,13 @@ export class AuthService {
 
   getUser(userId: number): Observable<User> {
     return this.httpClient.get<User>(this.NewPath + userId);
+  }
+
+  resetPassword(email: string, token: string, newPassword: string): Observable<any> {
+    return this.httpClient.post(this.NewPath + 'reset-password', { email, token, newPassword });
+  }
+  
+  requestPasswordReset(email: string): Observable<any> {
+    return this.httpClient.post(this.NewPath + 'forgot-password', { email });
   }
 }

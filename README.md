@@ -27,7 +27,7 @@ Localmart is a feature-rich Angular/Ionic-based e-commerce platform designed for
 - Update user information
 
 ### Notifications
-- Real-time notifications using Toastr for user actions
+- Real-time notifications using Alert for user actions
 
 ## Development Setup
 
@@ -107,7 +107,7 @@ ng test
 - TypeScript
 - RxJS
 - Bootstrap
-- Toastr
+- Alert
 - Docker
 - DBeaver
 

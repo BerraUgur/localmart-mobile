@@ -7,7 +7,6 @@ import { Mail } from 'src/app/models/mail';
 import { MailService } from 'src/app/services/mail.service';
 import { Order } from 'src/app/models/order';
 import { OrdersService } from 'src/app/services/orders.service';
-import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
 import { LoggerService } from 'src/app/services/logger.service';
 import { Router } from '@angular/router';
