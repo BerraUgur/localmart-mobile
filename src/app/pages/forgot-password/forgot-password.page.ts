@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { MailService } from 'src/app/services/mail.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { LoggerService } from 'src/app/services/logger.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class ForgotPasswordPage {
 
   constructor(
     private mailService: MailService,
+    private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
     private logger: LoggerService
@@ -25,16 +27,12 @@ export class ForgotPasswordPage {
 
   async sendResetRequest() {
     this.isSubmitting = true;
-    const mail = {
-      to: this.email,
-      subject: 'Password Reset Request',
-      body: `Click the link below to reset your password:\nhttp://localhost:4200/reset-password?email=${this.email}`
-    };
-    this.mailService.sendMail(mail).subscribe({
+
+    this.authService.requestPasswordReset(this.email).subscribe({
       next: async () => {
         const alert = await this.alertController.create({
           header: 'Info',
-          message: 'Password reset request has been sent to your email address.',
+          message: 'A password reset link has been sent.',
           buttons: ['OK']
         });
         await alert.present();
@@ -42,15 +40,15 @@ export class ForgotPasswordPage {
         this.isSubmitting = false;
         this.router.navigate(['/login']);
       },
-      error: async () => {
+      error: async (err) => {
         const alert = await this.alertController.create({
           header: 'Info',
-          message: 'Password reset request has been sent to your email address.',
+          message: 'A password reset link has been sent.',
           buttons: ['OK']
         });
         await alert.present();
-        this.email = '';
         this.isSubmitting = false;
+        this.logger.logError('Error requesting password reset:', err);
         this.router.navigate(['/login']);
       }
     });
