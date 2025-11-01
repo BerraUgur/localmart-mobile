@@ -35,7 +35,7 @@ export class RegisterPage implements OnInit {
       await warningAlert.present();
     } else {
       const registerRequest: RegisterRequest = { email: this.email, password: this.password, firstName: this.firstName, lastName: this.lastName, phoneNumber: this.phoneNumber.toString(), username: this.userName };
-      this.authService.Register(registerRequest).subscribe(
+      this.authService.register(registerRequest).subscribe(
         async () => {
           this.router.navigate(['/login']);
         },

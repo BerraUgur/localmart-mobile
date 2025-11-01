@@ -25,7 +25,7 @@
 
     <ion-item class="item-avatar" *ngFor="let product of sellerProducts" routerLink="/product-detail/{{product.id}}">
       <div class="img">
-        <img src="http://localhost:5203{{product.mainImage}}" alt="{{ product.name }}">
+        <img src="{{apiUrl}}{{product.mainImage}}" alt="{{ product.name }}">
       </div>
       <div class="detail">
         <h2>{{product.name}}</h2>
@@ -57,7 +57,7 @@
       <ion-item class="item-avatar" *ngFor="let product of filteredProducts"
         routerLink="/product-detail/{{product.id}}">
         <div class="img">
-          <img src="http://localhost:5203{{product.mainImage}}" alt="{{ product.name }}">
+          <img src="{{apiUrl}}{{product.mainImage}}" alt="{{ product.name }}">
         </div>
         <div class="detail">
           <h2>{{product.name}}</h2>

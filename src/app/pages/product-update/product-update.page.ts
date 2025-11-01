@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LoggerService } from 'src/app/services/logger.service';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
+import { environment } from 'src/environments/environment';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -20,6 +21,7 @@ export class ProductUpdatePage implements OnInit {
   imagesArr: string[] = [];
 
   currentUserId?: number;
+  apiUrl = environment.apiUrl;
 
   isNewMainImg = false
   isNewOtherImg = false

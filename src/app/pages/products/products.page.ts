@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LoggerService } from 'src/app/services/logger.service';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-products',
@@ -20,11 +21,15 @@ export class productsPage implements OnInit {
   sellerProducts: Product[] = [];
   notSellerProducts: Product[] = [];
   noProducts: boolean = false;
+  apiUrl = environment.apiUrl;
 
   cities: any = []
 
-  constructor(private authService: AuthService, private productService: ProductService, private logger: LoggerService) {
-  }
+  constructor(
+    private authService: AuthService, 
+    private productService: ProductService, 
+    private logger: LoggerService
+  ) {}
 
   ngOnInit() {
     this.currentRole = this.authService.getCurrentRoles();

@@ -32,11 +32,6 @@ import { AuthInterceptor } from './services/auth.interceptor';
     AuthService
   ],
   bootstrap: [AppComponent],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
-function withFetch(): import("@angular/common/http").HttpFeature<import("@angular/common/http").HttpFeatureKind> {
-  throw new Error('Function not implemented.');
-}

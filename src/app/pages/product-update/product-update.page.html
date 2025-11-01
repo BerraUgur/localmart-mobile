@@ -25,7 +25,7 @@
 
       <ion-row class="ion-padding" *ngIf="mainImage">
         <ion-col>
-          <img *ngIf="mainImage" [src]="(!isNewMainImg ? 'http://localhost:5203' : '') + mainImage"
+          <img *ngIf="mainImage" [src]="(!isNewMainImg ? apiUrl : '') + mainImage"
             class="preview-img" />
         </ion-col>
       </ion-row>
@@ -33,7 +33,7 @@
       <ion-row class="ion-padding" *ngIf="imagesArr.length > 0">
         <ion-col>
           <div class="preview-list">
-            <img *ngFor="let img of imagesArr" [src]="(!isNewOtherImg ? 'http://localhost:5203' : '') + img"
+            <img *ngFor="let img of imagesArr" [src]="(!isNewOtherImg ? apiUrl : '') + img"
               [hidden]="!img" />
           </div>
         </ion-col>

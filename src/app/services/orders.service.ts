@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoggerService } from 'src/app/services/logger.service';
+import { environment } from '../../environments/environment';
 import { Order } from '../models/order';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,10 +10,12 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class OrdersService {
-  private baseUrl: string = 'http://localhost:5203/orders';
+  private baseUrl: string = `${environment.apiUrl}/orders`;
 
-  constructor(private http: HttpClient, private logger: LoggerService) {
-  }
+  constructor(
+    private http: HttpClient, 
+    private logger: LoggerService
+  ) {}
 
   getAllOrders(): Observable<Order[]> {
     return this.http.get<any>(`${this.baseUrl}`).pipe(

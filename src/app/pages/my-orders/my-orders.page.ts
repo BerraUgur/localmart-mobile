@@ -7,6 +7,7 @@ import { OrdersService } from 'src/app/services/orders.service';
 import { Mail } from 'src/app/models/mail';
 import { MailService } from 'src/app/services/mail.service';
 import { LoggerService } from 'src/app/services/logger.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-my-orders',
@@ -21,6 +22,7 @@ export class MyOrdersPage implements OnInit {
 
   currentUserId?: number;
   currentUserRole?: string;
+  apiUrl = environment.apiUrl;
 
   constructor(
     private alertController: AlertController,
@@ -29,7 +31,7 @@ export class MyOrdersPage implements OnInit {
     private authService: AuthService,
     private mailService: MailService,
     private logger: LoggerService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loadOrders();

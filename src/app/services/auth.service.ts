@@ -1,46 +1,45 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoggerService } from 'src/app/services/logger.service';
+import { Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../environments/environment';
+import { LoggerService } from './logger.service';
 import { LoginResponse } from '../models/loginResponse';
 import { LoginRequest } from '../models/loginRequest';
 import { RegisterRequest } from '../models/registerRequest';
 import { UpdateUserRequest } from '../models/userRequest';
-import { Observable } from 'rxjs';
 import { User } from '../models/comment';
-import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  localStorage: Storage;
-  jwtHelperService: JwtHelperService = new JwtHelperService();
+  private readonly apiBaseUrl = `${environment.apiUrl}/auth/`;
+  private readonly localStorage: Storage;
+  private readonly jwtHelperService: JwtHelperService = new JwtHelperService();
+  
   currentUserId?: number;
   currentRoles?: string;
-  NewPath = "http://localhost:5203/auth/"
 
-  constructor(private httpClient: HttpClient, private logger: LoggerService) {
-    this.setUserStats();
+  constructor(
+    private readonly httpClient: HttpClient, 
+    private readonly logger: LoggerService
+  ) {
     this.localStorage = window.localStorage;
+    this.setUserStats();
   }
 
-  login(user: LoginRequest) {
-    return this.httpClient.post<LoginResponse>(this.NewPath + "login", user);
+  login(user: LoginRequest): Observable<LoginResponse> {
+    return this.httpClient.post<LoginResponse>(`${this.apiBaseUrl}login`, user);
   }
 
-  Register(user: RegisterRequest) {
-    return this.httpClient.post(this.NewPath + "register", user)
+  register(user: RegisterRequest): Observable<void> {
+    return this.httpClient.post<void>(`${this.apiBaseUrl}register`, user);
   }
 
-  isAuthencation() {
-    if (localStorage.getItem("token")) {
-      return true;
-    }
-
-    else {
-      return false;
-    }
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
   }
 
   getDecodedToken(): any {
@@ -94,26 +93,26 @@ export class AuthService {
   }
 
   updateUser(userId: number, updateUserRequest: UpdateUserRequest): Observable<void> {
-    return this.httpClient.put<void>(this.NewPath + userId + "/update", updateUserRequest);
+    return this.httpClient.put<void>(`${this.apiBaseUrl}${userId}/update`, updateUserRequest);
   }
 
   deleteUser(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.NewPath}${id}`);
+    return this.httpClient.delete<void>(`${this.apiBaseUrl}${id}`);
   }
 
   getUserList(): Observable<User[]> {
-    return this.httpClient.get<User[]>(this.NewPath + "userlist");
+    return this.httpClient.get<User[]>(`${this.apiBaseUrl}userlist`);
   }
 
   getUser(userId: number): Observable<User> {
-    return this.httpClient.get<User>(this.NewPath + userId);
+    return this.httpClient.get<User>(`${this.apiBaseUrl}${userId}`);
   }
 
   resetPassword(email: string, token: string, newPassword: string): Observable<any> {
-    return this.httpClient.post(this.NewPath + 'reset-password', { email, token, newPassword });
+    return this.httpClient.post(`${this.apiBaseUrl}reset-password`, { email, token, newPassword });
   }
   
   requestPasswordReset(email: string): Observable<any> {
-    return this.httpClient.post(this.NewPath + 'forgot-password', { email });
+    return this.httpClient.post(`${this.apiBaseUrl}forgot-password`, { email });
   }
 }

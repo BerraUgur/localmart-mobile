@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class LoggerService {
-  private apiUrl = 'http://localhost:5203/logs';
+  private apiUrl = `${environment.apiUrl}/logs`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient
+  ) {}
 
   log(level: string, message: string, details?: any) {
     const userType = localStorage.getItem('userType') || 'anonymous';
