@@ -29,7 +29,7 @@
 
         <ion-item lines="none">
           <ion-thumbnail slot="start" class="ion-margin-end">
-            <ion-img [src]="'http://localhost:5203' + item.product.mainImage" alt="{{ item.product.name }}"></ion-img>
+            <ion-img [src]="apiUrl + item.product.mainImage" alt="{{ item.product.name }}"></ion-img>
           </ion-thumbnail>
           <ion-label>
             <h2>{{ item.product.name }}</h2>
@@ -107,7 +107,7 @@
 
         <ion-item lines="none">
           <ion-thumbnail slot="start" class="ion-margin-end">
-            <ion-img [src]="'http://localhost:5203' + item.product.mainImage" alt="{{ item.product.name }}"></ion-img>
+            <ion-img [src]="apiUrl + item.product.mainImage" alt="{{ item.product.name }}"></ion-img>
           </ion-thumbnail>
           <ion-label>
             <h2>{{ item.product.name }}</h2>

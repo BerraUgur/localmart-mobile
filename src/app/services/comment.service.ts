@@ -3,15 +3,18 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CustomComment } from '../models/comment';
 import { LoggerService } from 'src/app/services/logger.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
-  private baseUrl: string = 'http://localhost:5203/comments';
+  private baseUrl: string = `${environment.apiUrl}/comments`;
 
-  constructor(private http: HttpClient, private logger: LoggerService) {
-  }
+  constructor(
+    private http: HttpClient, 
+    private logger: LoggerService
+  ) {}
 
   getCommentsByProductId(productId: number): Observable<CustomComment[]> {
     return this.http.get<CustomComment[]>(`${this.baseUrl}/product/${productId}`);

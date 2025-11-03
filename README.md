@@ -60,25 +60,25 @@ src/
 
 ### Installation
 1. Clone the repository:
-   ```bash
+```bash
 git clone https://github.com/BerraUgur/localmart-mobile.git
 ```
 2. Navigate to the project directory:
-   ```bash
+```bash
 cd localmart-mobile
 ```
 3. Install dependencies:
-   ```bash
+```bash
 npm install
 ```
 
 ### Running the Application
 1. Start the development server:
-   ```bash
+```bash
 ng serve
 ```
 2. Open your browser and navigate to:
-   ```
+```
 http://localhost:4200/
 ```
 
@@ -116,3 +116,4 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## License
 This project is licensed under the MIT License.
+  

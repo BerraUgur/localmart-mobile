@@ -9,6 +9,7 @@ import { Order } from 'src/app/models/order';
 import { OrdersService } from 'src/app/services/orders.service';
 import { ProductService } from 'src/app/services/product.service';
 import { LoggerService } from 'src/app/services/logger.service';
+import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 
 @Component({
@@ -26,6 +27,7 @@ export class BasketPage implements OnInit {
   postalCode: any = '';
   openAddress: any = '';
   note: any = '';
+  apiUrl = environment.apiUrl;
 
   constructor(
     private alertController: AlertController,
@@ -36,7 +38,7 @@ export class BasketPage implements OnInit {
     private mailService: MailService,
     private logger: LoggerService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit() {
     if (localStorage.getItem('basket')) {

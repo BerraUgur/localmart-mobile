@@ -7,6 +7,7 @@ import { CustomComment } from 'src/app/models/comment';
 import { CommentService } from 'src/app/services/comment.service';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
+import { environment } from 'src/environments/environment';
 import Swiper from 'swiper';
 
 @Component({
@@ -27,6 +28,7 @@ export class productDetailPage implements OnInit, AfterViewInit {
   isLogging = false;
   currentUserId?: number;
   seller?: any;
+  apiUrl = environment.apiUrl;
 
   currentBasket: any = [];
 
@@ -41,7 +43,7 @@ export class productDetailPage implements OnInit, AfterViewInit {
     private commentService: CommentService,
     private authService: AuthService,
     private logger: LoggerService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.isLogging = this.authService.loggedIn();
