@@ -264,7 +264,7 @@ export class BasketPage implements OnInit {
               buttons: ['OK']
             }).then(successAlert => {
               successAlert.present().then(() => {
-                this.router.navigate(['/my-products']);
+                this.router.navigate(['/my-orders']);
               });
             });
           })
