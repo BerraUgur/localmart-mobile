@@ -45,6 +45,16 @@ export class productDetailPage implements OnInit, AfterViewInit {
     private logger: LoggerService
   ) {}
 
+  getImageUrl(imagePath: string | null | undefined): string {
+    if (!imagePath) return 'assets/icon/favicon.png';
+    // If URL already starts with http/https, it's a full Cloudinary URL
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    // Otherwise, it's a local/old image, prepend API URL
+    return `${this.apiUrl}${imagePath}`;
+  }
+
   ngOnInit() {
     this.isLogging = this.authService.loggedIn();
     this.currentRole = this.authService.getCurrentRoles();

@@ -33,6 +33,14 @@ export class MyOrdersPage implements OnInit {
     private logger: LoggerService
   ) {}
 
+  getImageUrl(imagePath: string | null | undefined): string {
+    if (!imagePath) return 'assets/icon/favicon.png';
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    return `${this.apiUrl}${imagePath}`;
+  }
+
   ngOnInit() {
     this.loadOrders();
   }

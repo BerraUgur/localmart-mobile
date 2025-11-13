@@ -40,6 +40,14 @@ export class BasketPage implements OnInit {
     private router: Router
   ) {}
 
+  getImageUrl(imagePath: string | null | undefined): string {
+    if (!imagePath) return 'assets/icon/favicon.png';
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    return `${this.apiUrl}${imagePath}`;
+  }
+
   ngOnInit() {
     if (localStorage.getItem('basket')) {
       this.currentBasket = JSON.parse((<any>localStorage.getItem('basket')));

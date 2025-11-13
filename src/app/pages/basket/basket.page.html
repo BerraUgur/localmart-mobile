@@ -15,7 +15,7 @@
     <ion-list class="v2" *ngIf="products.length > 0">
       <ion-item class="item-avatar" *ngFor="let product of products">
         <div class="img" routerLink="/product-detail/{{product.id}}">
-          <img src="{{apiUrl}}{{product.mainImage}}" alt="{{ product.name }}">
+          <img [src]="getImageUrl(product.mainImage)" alt="{{ product.name }}">
         </div>
         <div class="detail">
           <h2 routerLink="/product-detail/{{product.id}}">{{product.name}}</h2>

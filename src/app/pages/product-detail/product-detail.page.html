@@ -15,11 +15,11 @@
       <div class="swiper product-main-imgs">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
-            <div class="img"><img [src]="apiUrl + product?.mainImage" alt="{{ product?.name }}"
+            <div class="img"><img [src]="getImageUrl(product?.mainImage)" alt="{{ product?.name }}"
                 width="150"></div>
           </div>
           <div *ngFor="let image of product?.images" [hidden]="!image" class="swiper-slide">
-            <div class="img"><img [src]="apiUrl + image" alt="{{ product?.name }}" width="100"></div>
+            <div class="img"><img [src]="getImageUrl(image)" alt="{{ product?.name }}" width="100"></div>
           </div>
         </div>
       </div>
@@ -28,11 +28,11 @@
       <div class="swiper product-other-imgs">
         <div class="swiper-wrapper">
           <div class="swiper-slide active">
-            <div class="img"><img [src]="apiUrl + product?.mainImage" alt="{{ product?.name }}"
+            <div class="img"><img [src]="getImageUrl(product?.mainImage)" alt="{{ product?.name }}"
                 width="150"></div>
           </div>
           <div *ngFor="let image of product?.images" [hidden]="!image" class="swiper-slide">
-            <div class="img {{!image ? 'hide' : ''}}"><img [src]="apiUrl + '/' + image"
+            <div class="img {{!image ? 'hide' : ''}}"><img [src]="getImageUrl(image)"
                 alt="{{ product?.name }}" width="100"></div>
           </div>
         </div>
